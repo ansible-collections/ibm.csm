@@ -1,6 +1,6 @@
 # IBM Copy Services Manager Collection for Ansible
 <!-- Add CI and code coverage badges here. Samples included below. -->
-[![CI](https://github.com/ansible-collections/ibm.csm/workflows/CI/badge.svg?event=push)](https://github.com/ansible-collections/ibm.csm/action/sworkflows/ansible-test.yml) 
+[![CI](https://github.com/ansible-collections/ibm.csm/workflows/CI/badge.svg?event=push)](https://github.com/ansible-collections/ibm.csm/action/workflows/ansible-test.yml) 
 [![Codecov](https://img.shields.io/codecov/c/github/ansible-collections/ibm.csm)](https://codecov.io/gh/ansible-collections/ibm.csm)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
