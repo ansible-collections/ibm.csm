@@ -16,6 +16,8 @@ from ansible.module_utils.basic import missing_required_lib
 PYCSM_IMP_ERR = None
 try:
     from pyCSM.clients.session_client import sessionClient
+    from pyCSM.clients.hardware_client import hardwareClient
+    from pyCSM.clients.system_client import systemClient
 
     HAS_PYCSM = True
 except ImportError:
@@ -33,7 +35,7 @@ properties = {
 
 
 @six.add_metaclass(abc.ABCMeta)
-class CSMSessionClientBase(object):
+class CSMClientBase(object):
     def __init__(self, module):
 
         if not HAS_PYCSM:
@@ -47,17 +49,35 @@ class CSMSessionClientBase(object):
         self.port = module.params['port']
         self.call_properties = module.params['call_properties']
 
-        self.session_client = self.connect_to_api()
+        self.session_client = self.connect_to_session_api()
+        self.hardware_client = self.connect_to_hw_api()
+        self.system_client = self.connect_to_system_api()
         self.changed = False
         self.failed = False
 
-    def connect_to_api(self):
+    def connect_to_session_api(self):
 
         session_client = sessionClient(server_address=self.hostname, server_port=self.port, username=self.username,
                                        password=self.password)
         session_client.change_properties(self.call_properties)
 
         return session_client
+
+    def connect_to_hw_api(self):
+
+        hw_client = hardwareClient(server_address=self.hostname, server_port=self.port, username=self.username,
+                                       password=self.password)
+        hw_client.change_properties(self.call_properties)
+
+        return hw_client
+
+    def connect_to_system_api(self):
+
+        system_client = systemClient(server_address=self.hostname, server_port=self.port, username=self.username,
+                                       password=self.password)
+        system_client.change_properties(self.call_properties)
+
+        return system_client
 
 
 def csm_argument_spec():
