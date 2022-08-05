@@ -41,9 +41,7 @@ EXAMPLES = r'''
     action: 'run'
 '''
 
-RETURN = r'''
-json result containing the CSM messaage indicating the successful or failure of the action
-'''
+RETURN = r''' # '''
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.ibm.csm.plugins.module_utils.ibm_csm_client import CSMClientBase, csm_argument_spec
