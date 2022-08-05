@@ -1,0 +1,7 @@
+---
+# module defaults
+hostname: "{{ csm_host }}"
+username: "{{ csm_username }}"
+password: "{{ csm_password }}"
+
+no_object_msg: "returned no objects from the CSM server."
