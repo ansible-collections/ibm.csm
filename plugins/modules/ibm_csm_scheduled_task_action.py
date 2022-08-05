@@ -23,7 +23,7 @@ options:
     type: str
   action:
     description:
-      - The action to run against the scheduled task:  'run', 'enable', 'disable'
+      - The action to run against the scheduled task  ('run', 'enable', 'disable')
     type: str
 notes:
   - Supports C(check_mode).
