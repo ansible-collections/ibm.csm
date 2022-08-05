@@ -1,7 +1,7 @@
 # Copyright (C) 2022 IBM CORPORATION
 # Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
 
-'''Python versions supported: >= 3.9'''
+'''Python versions supported: >= 3.10'''
 
 from __future__ import absolute_import, division, print_function
 
