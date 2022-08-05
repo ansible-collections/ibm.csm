@@ -15,7 +15,7 @@ short_description: Allows customers to run, enable or disable a CSM scheduled ta
 description:
   - Returns the result of the requested action against a CSM scheduled task.
 version_added: "1.0.0"
-author: Randy Blea (blearandy)
+author: Randy Blea (@blearandy)
 options:
   id:
     description:
