@@ -28,7 +28,7 @@ options:
 notes:
   - Supports C(check_mode).
 extends_documentation_fragment:
-  - ibm.csm.csm.documentation
+  - ibm.csm.ibm_csm_client.documentation
 '''
 
 EXAMPLES = r'''
