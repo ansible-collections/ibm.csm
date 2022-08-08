@@ -36,7 +36,7 @@ class ModuleDocFragment(object):
         description:
           - List of changeable options when creating a connection to the cSM server.
         type: dict
-        default: {'language': 'en-US', 'verify': False}
+        default: {'language': 'en-US', 'verify': False, 'cert' None}
     requirements:
       - pyCSM >= 1.0.0
       - python >= 3.6
