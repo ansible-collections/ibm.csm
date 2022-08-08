@@ -27,7 +27,6 @@ options:
     type: str
 notes:
   - Supports C(check_mode).
-extends_documentation_fragment: ibm.csm.csm_client_fragment
 '''
 
 EXAMPLES = r'''
