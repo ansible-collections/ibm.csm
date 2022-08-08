@@ -49,11 +49,7 @@ from ansible_collections.ibm.csm.plugins.module_utils.ibm_csm_client import CSMC
 class ScheduledTaskManager(CSMClientBase):
     def run_action_now(self):
         if self.params['action'] == 'run':
-            kwargs = dict(
-                taskid=self.params['id'],
-                synchronous=self.params[False]
-            )
-            return self.session_client.run_scheduled_task(**kwargs)
+            return self.session_client.run_scheduled_task(self.params['id'], False)
 
 
 def main():
