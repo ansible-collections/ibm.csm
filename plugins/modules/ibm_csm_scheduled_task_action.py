@@ -25,6 +25,30 @@ options:
     description:
       - The action to run against the scheduled task  ('run', 'enable', 'disable')
     type: str
+      hostname:
+    description:
+    - The hostname or IP address of the CSM Server.
+    required: true
+    type: str
+  username:
+    description:
+    - The username for the CSM server.
+    required: true
+    type: str
+  password:
+    description:
+    - The password for the username on the CSM server.
+    required: true
+    type: str
+  port:
+    description:
+    - The port number for the connection to the CSM server.
+    type: int
+    default: 9559
+  call_properties
+    description:
+    - List of changeable options when creating a connection to the cSM server.
+    type: dict
 notes:
   - Supports C(check_mode).
 '''
