@@ -29,8 +29,8 @@ ABSENT = 'absent'
 
 properties = {
     "language": "en-US",
-    "verify": False,
-    "cert": None
+    "verify": False
+    # "cert": None
 }
 
 
@@ -66,7 +66,7 @@ class CSMClientBase(object):
     def connect_to_hw_api(self):
 
         hw_client = hardwareClient(server_address=self.hostname, server_port=self.port, username=self.username,
-                                       password=self.password)
+                                   password=self.password)
         hw_client.change_properties(self.call_properties)
 
         return hw_client
@@ -74,7 +74,7 @@ class CSMClientBase(object):
     def connect_to_system_api(self):
 
         system_client = systemClient(server_address=self.hostname, server_port=self.port, username=self.username,
-                                       password=self.password)
+                                     password=self.password)
         system_client.change_properties(self.call_properties)
 
         return system_client
