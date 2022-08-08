@@ -32,7 +32,7 @@ class ModuleDocFragment(object):
           - The port number for the connection to the CSM server.
         type: int
         default: 9559
-      call_properties
+      call_properties:
         description: 
           - List of changeable options when creating a connection to the cSM server.
         type: dict
