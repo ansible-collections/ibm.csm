@@ -29,7 +29,7 @@ ABSENT = 'absent'
 
 properties = {
     "language": "en-US",
-    "verify": False,
+    "verify": False
     # "cert": None
 }
 

@@ -35,9 +35,10 @@ class ModuleDocFragment(object):
       call_properties:
         description:
           - List of changeable options when creating a connection to the CSM server.
-          - NOTE: For a secure connection add value 'cert' to the call_properties with the certificate.
         type: dict
         default: {'language': 'en-US', 'verify': False}
+    notes:
+      - For a secure connection add value 'cert' to the call_properties with the certificate.
     requirements:
       - pyCSM >= 1.0.0
       - python >= 3.6
