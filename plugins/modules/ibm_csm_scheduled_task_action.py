@@ -16,23 +16,23 @@ description:
   - Returns the result of the requested action against a CSM scheduled task.
 version_added: "1.0.0"
 author: Randy Blea (@blearandy)
-options: 
-  id: 
-    description: 
+options:
+  id:
+    description:
       - The id for the task to issue the action against
     type: str
-  action: 
-    description: 
+  action:
+    description:
       - The action to run against the scheduled task  ('run', 'enable', 'disable')
-    type: str  
-notes: 
+    type: str
+notes:
   - Supports C(check_mode).
 extends_documentation_fragment: ibm.csm.csm_client_fragment.documentation
 '''
 
 EXAMPLES = r'''
 - name: Run the backup task immediately
-  ibm.csm.ibm_csm_scheduled_task_action: 
+  ibm.csm.ibm_csm_scheduled_task_action:
     hostname: "{{ csm_host }}"
     username: "{{ csm_username }}"
     password: "{{ csm_password }}"

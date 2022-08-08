@@ -11,33 +11,33 @@ __metaclass__ = type
 class ModuleDocFragment(object):
     # Parameters for IBM CSM modules
     DOCUMENTATION = r'''
-    options: 
-      hostname: 
-        description: 
+    options:
+      hostname:
+        description:
           - The hostname or IP address of the CSM Server.
         required: true
         type: str
-      username: 
-        description: 
+      username:
+        description:
           - The username for the CSM server.
         required: true
         type: str
-      password: 
+      password:
         description:
           - The password for the username on the CSM server.
         required: true
         type: str
-      port: 
-        description: 
+      port:
+        description:
           - The port number for the connection to the CSM server.
         type: int
         default: 9559
       call_properties:
-        description: 
+        description:
           - List of changeable options when creating a connection to the cSM server.
         type: dict
-        default: {'language': 'en-US', 'verify': False, 'cert': None}
-    requirements: 
+        default: {'language': 'en-US', 'verify': False, 'cert': (None)}
+    requirements:
       - pyCSM >= 1.0.0
       - python >= 3.6
     '''
