@@ -65,7 +65,7 @@ def main():
 
     result = scheduled_task_manager.run_action_now()
 
-    module.exit_json(changed=scheduled_task_manager.changed, result=result)
+    module.exit_json(changed=scheduled_task_manager.changed, result=result.json())
 
 
 if __name__ == '__main__':
