@@ -14,8 +14,36 @@
       password: "{{ csm_password }}"
 
   block:
-    - name: Issue task run command
+    - name: Run the task immediately
       ibm.csm.ibm_csm_scheduled_task_action:
         id: "{{ id }}"
         action: 'run'
+      register: result
+    - name: Run the task immediately and do not return until complete
+      ibm.csm.ibm_csm_scheduled_task_action:
+        id: "{{ id }}"
+        action: 'run'
+        synchronous: True
+      register: result
+    - name: Run the task at the specified time
+      ibm.csm.ibm_csm_scheduled_task_action:
+        id: "{{ id }}"
+        action: 'run'
+        at_time: '2022-08-09T17-15'
+      register: result
+    - name: Enable the task now
+      ibm.csm.ibm_csm_scheduled_task_action:
+        id: "{{ id }}"
+        action: 'enable'
+      register: result
+    - name: Enable the task at the specified time
+      ibm.csm.ibm_csm_scheduled_task_action:
+        id: "{{ id }}"
+        action: 'enable'
+        at_time: '2022-08-09T17-30'
+      register: result
+    - name: Disable the task
+      ibm.csm.ibm_csm_scheduled_task_action:
+        id: "{{ id }}"
+        action: 'disable'
       register: result
