@@ -20,7 +20,7 @@ author: Tom Zito (tom.zito)
 options:
   backup_id:
     description:
-      - The ID number of the backup.
+      - The ID number of the backup. (ex: 1659891600)
     type: int
   count:
     description:
@@ -28,11 +28,11 @@ options:
     type: int
   device_id:
     description:
-      - The ID of the storage system.
+      - The ID of the storage system. The cluster name on a FlashSystem. (ex: lbsfs5200A)
     type: str
   device_type:
     description:
-      - The type of storage device (ex. ds8000 or svc).
+      - The type of storage device (ex: ds8000 or svc).
     type: str
   gather_subset:
     description:
@@ -47,7 +47,7 @@ options:
                              The 'system_id' option will limit results to a single DS8000.
       - hardware_svchosts_list - List the hosts defined on the SVC based storage system.
                                  The 'device_id' option is required.
-      - hardware_volume_list_by_wwn - List volumes for a given storage system.
+      - hardware_volume_list_by_wwn - List volumes for a given WWN.
                                       The 'wwn_name' option is required.
       - hardware_volume_list_by_system - List volumes for a given storage system.
                                          The 'system_name' option is required.
@@ -56,17 +56,20 @@ options:
                                 The 'session', 'role' and 'backup_id' options are required.
       - session_command_list - List of available commands for a session based on the session’s
                                current state.  The 'session' option is required.
-      - session_detail - Detailed information for a session.  The 'session' option is required.
+      - session_detail - Detailed information for a session.
+                         The 'session' option is required.
       - session_list - Overview summary for sessions managed by the server.
       - session_list_short - Minimal overview summary for sessions managed by the server.
       - session_option_list - Gets the options for the given session. The results returned will vary
-                              depending on the session type.  The 'session' option is required.
+                              depending on the session type.
+                              The 'session' option is required.
       - session_recovered_backup_detail - Pair information for a recovered backup on a session.
                                           The 'session' and 'backup_id' options are required.
       - session_recovered_backup_list - Lists all recovered backups for Spec V Safeguarded Copy
-                                        session.  The 'session' option is required.
-      - session_rolepair - Summary for a given role pair in a session.  The 'session' and
-                           'rolepair' options are required.
+                                        session.
+                                        The 'session' option is required.
+      - session_rolepair - Summary for a given role pair in a session.
+                           The 'session' and 'rolepair' options are required.
       - session_snapshot_clone_detail - Pair details for the thin clone of the specified snapshot.
                                         The 'session' and 'snapshot' options are required.
       - session_snapshot_clone_list - List clones for snapshots in Spec V Safeguarded Copy session.
@@ -74,7 +77,7 @@ options:
       - session_snapshot_detail - Detailed information for a given snapshot in a session.
                                   The 'session', 'role' and 'snapshot' options are required.
       - system_log_event_list - List the most recent log events.
-                                The 'count' option is required.  The 'session' option is optional..
+                                The 'count' option is required.  The 'session' option is optional.
       - system_log_packages_list - List the log packages and their location on the server.
       - system_session_supported_list - List the supported session types.
       - system_version - The version of the server being called.
@@ -83,31 +86,32 @@ options:
     elements: str
   role:
     description:
-      - The name of the role where the backup or snapshot resides.
+      - The name of the role where the backup or snapshot resides. (ex: H1 or H2)
     type: str
   rolepair:
     description:
-      - The name of the role pair.
+      - The name of the role pair. (ex: H1-B1 or H1-R1)
     type: str
   session:
     description:
-      - The name of the session.
+      - The name of the session. (ex: SGC_DB2_LBSFS5200A)
     type: str
   snapshot:
     description:
-      - The name of the session snapshot.
+      - The name of the session snapshot.  (ex: ???)
     type: str
   system_id:
     description:
-      - The ID of the storage system.
+      - The ID of the DS8000 storage system. (ex: 2107.DYR51)
     type: str
   system_name:
     description:
-      - The name of the storage system.
+      - The name of the storage system. (ex: 2107.DYR51 for DS8000 or lbsfs5200A for FlashSystem)
     type: str
   wwn_name:
     description:
-      - The WWN, full or partial, to search for.
+      - The WWN, full or partial, to search for. (ex: 6005076812810039f8000000000000 for WWNs
+        6005076812810039f800000000000000 - 6005076812810039f8000000000000FF)
     type: str
 notes:
   - Supports C(check_mode).
@@ -115,12 +119,59 @@ extends_documentation_fragment: ibm.csm.csm_client_fragment.documentation
 '''
 
 EXAMPLES = r'''
-- name: Retreive all information that does not require additional options
+- name: Retreive all information that does not require additional options.
   ibm.csm.ibm_csm_info:
     hostname: "{{ csm_host }}"
     username: "{{ csm_username }}"
     password: "{{ csm_password }}"
     gather_subset: all
+
+- name: Retreive a short list of sessions and the scheduled tasks.
+  ibm.csm.ibm_csm_info:
+    hostname: "{{ csm_host }}"
+    username: "{{ csm_username }}"
+    password: "{{ csm_password }}"
+    gather_subset: 
+      - session_list_short
+      - scheduled_task_list
+
+- name: Retreive the options and available commands for session EXAMPLE_SESSION.
+  ibm.csm.ibm_csm_info:
+    hostname: "{{ csm_host }}"
+    username: "{{ csm_username }}"
+    password: "{{ csm_password }}"
+    gather_subset: 
+      - session_command_list
+      - session_option_list
+    session: EXAMPLE_SESSION
+
+- name: Retreive full info for all sessions and a recovered backup list for session EXAMPLE_SESSION.
+  ibm.csm.ibm_csm_info:
+    hostname: "{{ csm_host }}"
+    username: "{{ csm_username }}"
+    password: "{{ csm_password }}"
+    gather_subset: 
+      - session_list
+      - session_recovered_backup_list
+    session: EXAMPLE_SESSION
+
+- name: Retreive full backup information for session EXAMPLE_SESSION, role H1 and backup 1659891600.
+  ibm.csm.ibm_csm_info:
+    hostname: "{{ csm_host }}"
+    username: "{{ csm_username }}"
+    password: "{{ csm_password }}"
+    gather_subset: session_backup_detail
+    session: EXAMPLE_SESSION
+    role: H1
+    backup_id: 1659891600
+
+- name: Retrieve info for WWNs 6005076812810039f800000000000000 - 6005076812810039f8000000000000FF.
+  ibm.csm.ibm_csm_info:
+    hostname: "{{ csm_host }}"
+    username: "{{ csm_username }}"
+    password: "{{ csm_password }}"
+    gather_subset: hardware_volume_list_by_wwn
+    wwn: 6005076812810039f8000000000000
 '''
 
 RETURN = r''' # '''
