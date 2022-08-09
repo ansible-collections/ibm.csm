@@ -31,7 +31,6 @@ options:
     description:
       - Valid when action is 'run'.  If True, won't return from call until task has completed the run.
     type: bool
-    default: False
   at_time:
     description:
       - Specify this value to run the task at a certain time.  Leave off to run now. Format of yyyy-MM-dd'T'HH-mm
@@ -136,8 +135,10 @@ class ScheduledTaskManager(CSMClientBase):
 
 def main():
     argument_spec = csm_argument_spec()
-    argument_spec.update(id=dict(type='str'), action=dict(type='str'),
-                         synchronous=dict(type='bool'), at_time=dict(type='str'))
+    argument_spec.update(id=dict(type='str', required=True),
+                         action=dict(type='str', required=True),
+                         synchronous=dict(type='bool'),
+                         at_time=dict(type='str'))
 
     module = AnsibleModule(
         argument_spec=argument_spec,
