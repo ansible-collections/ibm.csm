@@ -48,7 +48,7 @@ EXAMPLES = r'''
     password: "{{ csm_password }}"
     id: scheduled_task_id
     action: 'run'
-    
+
 - name: Run the task immediately and do not return until complete
   ibm.csm.ibm_csm_scheduled_task_action:
     hostname: "{{ csm_host }}"
@@ -66,7 +66,7 @@ EXAMPLES = r'''
     id: scheduled_task_id
     action: 'run'
     at_time: '2022-08-09T17-15'
-    
+
 - name: Enable the task now
   ibm.csm.ibm_csm_scheduled_task_action:
     hostname: "{{ csm_host }}"
@@ -74,7 +74,7 @@ EXAMPLES = r'''
     password: "{{ csm_password }}"
     id: 2
     action: 'enable'
-    
+
 - name: Enable the task at the specified time
   ibm.csm.ibm_csm_scheduled_task_action:
     hostname: "{{ csm_host }}"
@@ -83,8 +83,8 @@ EXAMPLES = r'''
     id: 2
     action: 'enable'
     at_time: '2022-08-09T17-30'
-    
-- name: Disable the task 
+
+- name: Disable the task
   ibm.csm.ibm_csm_scheduled_task_action:
     hostname: "{{ csm_host }}"
     username: "{{ csm_username }}"
