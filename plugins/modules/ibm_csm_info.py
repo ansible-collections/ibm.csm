@@ -233,88 +233,88 @@ class CSMGatherInfo(CSMClientBase):
     def get_copyset_list(self):
         kwargs = dict(name=self.params['name'])
         try:
-            return json.loads(self.session_client.get_copysets(**kwargs).text)
+            return self.session_client.get_copysets(**kwargs)
         except ValueError:
             self.subset_opt_error("copyset_list", kwargs)
 
     def get_copyset_pair_list(self):
         kwargs = dict(name=self.params['name'],
                       rolepair=self.params['rolepair'])
-        return json.loads(self.session_client.get_pair_info(**kwargs).text)
+        return self.session_client.get_pair_info(**kwargs)
 
     def get_hardware_device_list(self):
         kwargs = dict(device_type=self.params['device_type'])
-        return json.loads(self.hardware_client.get_devices(**kwargs).text)
+        return self.hardware_client.get_devices(**kwargs)
 
     def get_hardware_path_list(self):
         if self.module.params['system_id'] and len(self.module.params['system_id']) > 0:
             try:
                 kwargs = dict(system_id=self.params['system_id'])
-                return json.loads(self.hardware_client.get_path_on_storage_system(**kwargs).text)
+                return self.hardware_client.get_path_on_storage_system(**kwargs)
             except ValueError:
                 self.subset_opt_error("hardware_path_list", kwargs)
         else:
-            return json.loads(self.hardware_client.get_paths().text)
+            return self.hardware_client.get_paths()
 
     def get_hardware_svchosts_list(self):
         kwargs = dict(device_id=self.params['device_id'])
-        return json.loads(self.hardware_client.get_svchosts(**kwargs).text)
+        return self.hardware_client.get_svchosts(**kwargs)
 
     def get_hardware_volume_list_by_system(self):
         kwargs = dict(system_name=self.params['system_name'])
-        return json.loads(self.hardware_client.get_volumes(**kwargs).text)
+        return self.hardware_client.get_volumes(**kwargs)
 
     def get_hardware_volume_list_by_wwn(self):
         kwargs = dict(wwn_name=self.params['wwn_name'])
-        return json.loads(self.hardware_client.get_volumes_by_wwn(**kwargs).text)
+        return self.hardware_client.get_volumes_by_wwn(**kwargs)
 
     def get_scheduled_task_list(self):
-        return json.loads(self.session_client.get_scheduled_tasks().text)
+        return self.session_client.get_scheduled_tasks()
 
     def get_session_backup_detail(self):
         kwargs = dict(name=self.params['name'],
                       role=self.params['role'],
                       backup_id=self.params['backup_id'])
         try:
-            return json.loads(self.session_client.get_backup_details(**kwargs).text)
+            return self.session_client.get_backup_details(**kwargs)
         except ValueError:
             self.subset_opt_error("session_backup_detail", kwargs)
 
     def get_session_command_list(self):
         kwargs = dict(name=self.params['name'])
-        return json.loads(self.session_client.get_available_commands(**kwargs).text)
+        return self.session_client.get_available_commands(**kwargs)
 
     def get_session_detail(self):
         kwargs = dict(name=self.params['name'])
-        return json.loads(self.session_client.get_session_info(**kwargs).text)
+        return self.session_client.get_session_info(**kwargs)
 
     def get_session_list(self):
-        return json.loads(self.session_client.get_session_overviews().text)
+        return self.session_client.get_session_overviews()
 
     def get_session_list_short(self):
-        return json.loads(self.session_client.get_session_overviews_short().text)
+        return self.session_client.get_session_overviews_short()
 
     def get_session_option_list(self):
         kwargs = dict(name=self.params['name'])
         try:
-            return json.loads(self.session_client.get_session_options(**kwargs).text)
+            return self.session_client.get_session_options(**kwargs)
         except ValueError:
             self.subset_opt_error("session_option_list", kwargs)
 
     def get_session_recovered_backup_detail(self):
         kwargs = dict(name=self.params['name'],
                       backup_id=self.params['backup_id'])
-        return json.loads(self.session_client.get_recovered_backup_details(**kwargs).text)
+        return self.session_client.get_recovered_backup_details(**kwargs)
 
     def get_session_recovered_backup_list(self):
         kwargs = dict(name=self.params['name'])
-        return json.loads(self.session_client.get_recovered_backups(**kwargs).text)
+        return self.session_client.get_recovered_backups(**kwargs)
 
     def get_session_rolepair_list(self):
         kwargs = dict(name=self.params['name'],
                       rolepair=self.params['rolepair'])
         try:
-            return json.loads(self.session_client.get_rolepair_info(**kwargs).text)
+            return self.session_client.get_rolepair_info(**kwargs)
         except ValueError:
             self.subset_opt_error("session_rolepair_list", kwargs)
 
@@ -322,14 +322,14 @@ class CSMGatherInfo(CSMClientBase):
         kwargs = dict(name=self.params['name'],
                       snapshot_name=self.params['snapshot'])
         try:
-            return json.loads(self.session_client.get_snapshot_clone_details_by_name(**kwargs).text)
+            return self.session_client.get_snapshot_clone_details_by_name(**kwargs)
         except ValueError:
             self.subset_opt_error("session_snapshot_clone_detail", kwargs)
 
     def get_session_snapshot_clone_list(self):
         kwargs = dict(name=self.params['name'])
         try:
-            return json.loads(self.session_client.get_snapshot_clones(**kwargs).text)
+            return self.session_client.get_snapshot_clones(**kwargs)
         except ValueError:
             self.subset_opt_error("session_snapshot_clone_list", kwargs)
 
@@ -338,7 +338,7 @@ class CSMGatherInfo(CSMClientBase):
                       role=self.params['role'],
                       snapshot_name=self.params['snapshot'])
         try:
-            return json.loads(self.session_client.get_snapshot_details_by_name(**kwargs).text)
+            return self.session_client.get_snapshot_details_by_name(**kwargs)
         except ValueError:
             self.subset_opt_error("session_snapshot_detail", kwargs)
 
@@ -348,19 +348,19 @@ class CSMGatherInfo(CSMClientBase):
             kwargs['count'] = self.module.params['count']
         if self.module.params['name'] and len(self.module.params['name']) > 0:
             kwargs['name'] = self.module.params['name']
-        return json.loads(self.system_client.get_log_events(**kwargs).text)
+        return self.system_client.get_log_events(**kwargs)
 
     def get_system_log_packages_list(self):
-        return json.loads(self.system_client.get_log_pkgs().text)
+        return self.system_client.get_log_pkgs()
 
     def get_system_session_supported_list(self):
-        return json.loads(self.system_client.get_session_types().text)
+        return self.system_client.get_session_types()
 
     def get_system_version_list(self):
-        return json.loads(self.system_client.get_server_version().text)
+        return self.system_client.get_server_version()
 
     def get_system_volume_count_list(self):
-        return json.loads(self.system_client.get_volume_counts().text)
+        return self.system_client.get_volume_counts()
 
     def run_query(self):
 
@@ -417,55 +417,55 @@ class CSMGatherInfo(CSMClientBase):
         query_result['changed'] = False
 
         if 'copyset_list' in subset:
-            query_result['copyset_list'] = self.get_copyset_list()
+            query_result['copyset_list'] = self.get_copyset_list().json()
         if 'copyset_pair_list' in subset:
-            query_result['copyset_pair_list'] = self.get_copyset_pair_list()
+            query_result['copyset_pair_list'] = self.get_copyset_pair_list().json()
         if 'hardware_device_list' in subset:
-            query_result['hardware_device_list'] = self.get_hardware_device_list()
+            query_result['hardware_device_list'] = self.get_hardware_device_list().json()
         if 'hardware_path_list' in subset:
-            query_result['hardware_path_list'] = self.get_hardware_path_list()
+            query_result['hardware_path_list'] = self.get_hardware_path_list().json()
         if 'hardware_svchosts_list' in subset:
-            query_result['hardware_svchosts_list'] = self.get_hardware_svchosts_list()
+            query_result['hardware_svchosts_list'] = self.get_hardware_svchosts_list().json()
         if 'hardware_volume_list_by_system' in subset:
-            query_result['hardware_volume_list_by_system'] = self.get_hardware_volume_list_by_system()
+            query_result['hardware_volume_list_by_system'] = self.get_hardware_volume_list_by_system().json()
         if 'hardware_volume_list_by_wwn' in subset:
-            query_result['hardware_volume_list_by_wwn'] = self.get_hardware_volume_list_by_wwn()
+            query_result['hardware_volume_list_by_wwn'] = self.get_hardware_volume_list_by_wwn().json()
         if 'scheduled_task_list' in subset:
-            query_result['scheduled_task_list'] = self.get_scheduled_task_list()
+            query_result['scheduled_task_list'] = self.get_scheduled_task_list().json()
         if 'session_backup_detail' in subset:
-            query_result['session_backup_detail'] = self.get_session_backup_detail()
+            query_result['session_backup_detail'] = self.get_session_backup_detail().json()
         if 'session_command_list' in subset:
-            query_result['session_command_list'] = self.get_session_command_list()
+            query_result['session_command_list'] = self.get_session_command_list().json()
         if 'session_detail' in subset:
-            query_result['session_detail'] = self.get_session_detail()
+            query_result['session_detail'] = self.get_session_detail().json()
         if 'session_list' in subset:
-            query_result['session_list'] = self.get_session_list()
+            query_result['session_list'] = self.get_session_list().json()
         if 'session_list_short' in subset:
-            query_result['session_list_short'] = self.get_session_list_short()
+            query_result['session_list_short'] = self.get_session_list_short().json()
         if 'session_option_list' in subset:
-            query_result['session_option_list'] = self.get_session_option_list()
+            query_result['session_option_list'] = self.get_session_option_list().json()
         if 'session_recovered_backup_detail' in subset:
-            query_result['session_recovered_backup_detail'] = self.get_session_recovered_backup_detail()
+            query_result['session_recovered_backup_detail'] = self.get_session_recovered_backup_detail().json()
         if 'session_recovered_backup_list' in subset:
-            query_result['session_recovered_backup_list'] = self.get_session_recovered_backup_list()
+            query_result['session_recovered_backup_list'] = self.get_session_recovered_backup_list().json()
         if 'session_rolepair_list' in subset:
-            query_result['session_rolepair'] = self.get_session_rolepair_list()
+            query_result['session_rolepair'] = self.get_session_rolepair_list().json()
         if 'session_snapshot_clone_detail' in subset:
-            query_result['session_snapshot_clone_detail'] = self.get_session_snapshot_clone_detail()
+            query_result['session_snapshot_clone_detail'] = self.get_session_snapshot_clone_detail().json()
         if 'session_snapshot_clone_list' in subset:
-            query_result['session_snapshot_clone_list'] = self.get_session_snapshot_clone_list()
+            query_result['session_snapshot_clone_list'] = self.get_session_snapshot_clone_list().json()
         if 'session_snapshot_detail' in subset:
-            query_result['session_snapshot_detail'] = self.get_session_snapshot_detail()
+            query_result['session_snapshot_detail'] = self.get_session_snapshot_detail().json()
         if 'system_log_event_list' in subset:
-            query_result['system_log_event_list'] = self.get_system_log_event_list()
+            query_result['system_log_event_list'] = self.get_system_log_event_list().json()
         if 'system_log_packages_list' in subset:
-            query_result['system_log_packages_list'] = self.get_system_log_packages_list()
+            query_result['system_log_packages_list'] = self.get_system_log_packages_list().json()
         if 'system_session_supported_list' in subset:
-            query_result['system_session_supported_list'] = self.get_system_session_supported_list()
+            query_result['system_session_supported_list'] = self.get_system_session_supported_list().json()
         if 'system_version_list' in subset:
-            query_result['system_version'] = self.get_system_version_list()
+            query_result['system_version'] = self.get_system_version_list().json()
         if 'system_volume_count_list' in subset:
-            query_result['system_volume_count_list'] = self.get_system_volume_count_list()
+            query_result['system_volume_count_list'] = self.get_system_volume_count_list().json()
 
         self.module.exit_json(**query_result)
 
