@@ -11,12 +11,12 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: ibm_csm_info
-short_description: Retrieves information for current environment from CSM server
+short_description: Retrieves current environment information from CSM server
 description:
   - Returns a list of specified CSM Server object(s) including Sessions,
     Task Schedules, Copysets, Hardware, CSM System and Authorization.
 version_added: "1.0.0"
-author: Tom Zito (tom.zito)
+author: Tom Zito (@twzito)
 options:
   backup_id:
     description:
@@ -35,12 +35,39 @@ options:
       - The type of storage device (example - ds8000 or svc).
     type: str
   gather_subset:
+    choices:
+      - all
+      - copyset_list
+      - copyset_pair_list
+      - hardware_device_list
+      - hardware_path_list
+      - hardware_svchosts_list
+      - hardware_volume_list_by_wwn
+      - hardware_volume_list_by_system
+      - scheduled_task_list
+      - session_backup_detail
+      - session_command_list
+      - session_detail
+      - session_list
+      - session_list_short
+      - session_option_list
+      - session_recovered_backup_detail
+      - session_recovered_backup_list
+      - session_rolepair_list
+      - session_snapshot_clone_detail
+      - session_snapshot_clone_list
+      - session_snapshot_detail
+      - system_log_event_list
+      - system_log_packages_list
+      - system_session_supported_list
+      - system_version_list
+    default: all
     description:
       - List of string variables to specify the CSM objects to retrieve info for.
       - all - list all objects that have their required options satisfied.
-      - copyset_list - Lists copysets for a given session.  The 'session' option is required.
+      - copyset_list - Lists copysets for a given session.  The 'name' option is required.
       - copyset_pair_list - List the pairs for the session in a given role pair.
-                            The 'session' and 'rolepair' options are required.
+                            The 'name' and 'rolepair' options are required.
       - hardware_device_list - Lists all the storagedevices of a given type.
                                The 'device_type' option is required.
       - hardware_path_list - List all logical paths on a given DS8000 storage system.
@@ -53,37 +80,41 @@ options:
                                          The 'system_name' option is required.
       - scheduled_task_list - list of scheduled tasks defined on the server.
       - session_backup_detail - Detailed information for a given backup in a session.
-                                The 'session', 'role' and 'backup_id' options are required.
-      - session_command_list - List of available commands for a session based on the session’s
-                               current state.  The 'session' option is required.
+                                The 'name', 'role' and 'backup_id' options are required.
+      - session_command_list - List of available commands for a session based on the session
+                               current state.  The 'name' option is required.
       - session_detail - Detailed information for a session.
-                         The 'session' option is required.
+                         The 'name' option is required.
       - session_list - Overview summary for sessions managed by the server.
       - session_list_short - Minimal overview summary for sessions managed by the server.
       - session_option_list - Gets the options for the given session. The results returned will vary
                               depending on the session type.
-                              The 'session' option is required.
+                              The 'name' option is required.
       - session_recovered_backup_detail - Pair information for a recovered backup on a session.
-                                          The 'session' and 'backup_id' options are required.
+                                          The 'name' and 'backup_id' options are required.
       - session_recovered_backup_list - Lists all recovered backups for Spec V Safeguarded Copy
                                         session.
-                                        The 'session' option is required.
-      - session_rolepair - Summary for a given role pair in a session.
-                           The 'session' and 'rolepair' options are required.
+                                        The 'name' option is required.
+      - session_rolepair_list - Summary for a given role pair in a session.
+                                The 'name' and 'rolepair' options are required.
       - session_snapshot_clone_detail - Pair details for the thin clone of the specified snapshot.
-                                        The 'session' and 'snapshot' options are required.
+                                        The 'name' and 'snapshot' options are required.
       - session_snapshot_clone_list - List clones for snapshots in Spec V Safeguarded Copy session.
-                                      The 'session' option is required.
+                                      The 'name' option is required.
       - session_snapshot_detail - Detailed information for a given snapshot in a session.
-                                  The 'session', 'role' and 'snapshot' options are required.
+                                  The 'name', 'role' and 'snapshot' options are required.
       - system_log_event_list - List the most recent log events.
-                                The 'count' option is required.  The 'session' option is optional.
+                                The 'count' option is required.  The 'name' option is optional.
       - system_log_packages_list - List the log packages and their location on the server.
       - system_session_supported_list - List the supported session types.
-      - system_version - The version of the server being called.
+      - system_version_list - The version of the server being called.
       - system_volume_count_list - List the volume usage on the server.
-    type: list
     elements: str
+    type: list
+  name:
+    description:
+      - The name of the session. (example - SGC_DB2_LBSFS5200A)
+    type: str
   role:
     description:
       - The name of the role where the backup or snapshot resides. (example - H1 or H2)
@@ -91,10 +122,6 @@ options:
   rolepair:
     description:
       - The name of the role pair. (example - H1-B1 or H1-R1)
-    type: str
-  session:
-    description:
-      - The name of the session. (example - SGC_DB2_LBSFS5200A)
     type: str
   snapshot:
     description:
@@ -130,7 +157,7 @@ EXAMPLES = r'''
     hostname: "{{ csm_host }}"
     username: "{{ csm_username }}"
     password: "{{ csm_password }}"
-    gather_subset: 
+    gather_subset:
       - session_list_short
       - scheduled_task_list
 
@@ -139,20 +166,20 @@ EXAMPLES = r'''
     hostname: "{{ csm_host }}"
     username: "{{ csm_username }}"
     password: "{{ csm_password }}"
-    gather_subset: 
+    gather_subset:
       - session_command_list
       - session_option_list
-    session: EXAMPLE_SESSION
+    name: EXAMPLE_SESSION
 
 - name: Retreive full info for all sessions and a recovered backup list for session EXAMPLE_SESSION.
   ibm.csm.ibm_csm_info:
     hostname: "{{ csm_host }}"
     username: "{{ csm_username }}"
     password: "{{ csm_password }}"
-    gather_subset: 
+    gather_subset:
       - session_list
       - session_recovered_backup_list
-    session: EXAMPLE_SESSION
+    name: EXAMPLE_SESSION
 
 - name: Retreive full backup information for session EXAMPLE_SESSION, role H1 and backup 1659891600.
   ibm.csm.ibm_csm_info:
@@ -160,7 +187,7 @@ EXAMPLES = r'''
     username: "{{ csm_username }}"
     password: "{{ csm_password }}"
     gather_subset: session_backup_detail
-    session: EXAMPLE_SESSION
+    name: EXAMPLE_SESSION
     role: H1
     backup_id: 1659891600
 
@@ -182,7 +209,7 @@ EXAMPLES = r'''
       - session_snapshot_clone_detail
       - session_snapshot_detail
     role: H1
-    session: Test_FC2_LBSFS5200A
+    name: Test_FC2_LBSFS5200A
     snapshot: snapshot0
 '''
 
@@ -195,64 +222,69 @@ import json
 
 
 class CSMGatherInfo(CSMClientBase):
+
+    def subset_opt_error(self, subset, option):
+        error_msg = "Subset {} failed.  Required parameters and values:".format(subset)
+        for key, value in option.items():
+            error_msg += "  {}={}".format(key, value)
+        self.module.fail_json(msg=error_msg)
+
     def get_copyset_list(self):
-        kwargs = dict( name=self.params['session'] )
+        kwargs = dict(name=self.params['name'])
         try:
             return json.loads(self.session_client.get_copysets(**kwargs).text)
-        except:
-            return []
+        except ValueError:
+            self.subset_opt_error("copyset_list", kwargs)
 
     def get_copyset_pair_list(self):
-        kwargs = dict( name=self.params['session'],
-                       rolepair=self.params['rolepair']
-                     )
+        kwargs = dict(name=self.params['name'],
+                      rolepair=self.params['rolepair'])
         return json.loads(self.session_client.get_pair_info(**kwargs).text)
 
     def get_hardware_device_list(self):
-        kwargs = dict( device_type=self.params['device_type'] )
+        kwargs = dict(device_type=self.params['device_type'])
         return json.loads(self.hardware_client.get_devices(**kwargs).text)
 
     def get_hardware_path_list(self):
         if self.module.params['system_id'] and len(self.module.params['system_id']) > 0:
             try:
-                kwargs = dict( system_id=self.params['system_id'] )
+                kwargs = dict(system_id=self.params['system_id'])
                 return json.loads(self.hardware_client.get_path_on_storage_system(**kwargs).text)
-            except:
-                return []
+            except ValueError:
+                self.subset_opt_error("hardware_path_list", kwargs)
         else:
             return json.loads(self.hardware_client.get_paths().text)
 
     def get_hardware_svchosts_list(self):
-        kwargs = dict( device_id=self.params['device_id'] )
+        kwargs = dict(device_id=self.params['device_id'])
         return json.loads(self.hardware_client.get_svchosts(**kwargs).text)
 
     def get_hardware_volume_list_by_system(self):
-        kwargs = dict( system_name=self.params['system_name'] )
+        kwargs = dict(system_name=self.params['system_name'])
         return json.loads(self.hardware_client.get_volumes(**kwargs).text)
 
     def get_hardware_volume_list_by_wwn(self):
-        kwargs = dict( wwn_name=self.params['wwn_name'] )
+        kwargs = dict(wwn_name=self.params['wwn_name'])
         return json.loads(self.hardware_client.get_volumes_by_wwn(**kwargs).text)
 
     def get_scheduled_task_list(self):
         return json.loads(self.session_client.get_scheduled_tasks().text)
 
     def get_session_backup_detail(self):
-        kwargs = dict( name=self.params['session'],
-                       role=self.params['role'],
-                       backup_id=self.params['backup_id']
-                     )
+        kwargs = dict(name=self.params['name'],
+                      role=self.params['role'],
+                      backup_id=self.params['backup_id'])
         try:
             return json.loads(self.session_client.get_backup_details(**kwargs).text)
-        except:
-            return []
+        except ValueError:
+            self.subset_opt_error("session_backup_detail", kwargs)
 
     def get_session_command_list(self):
-        kwargs = dict( name=self.params['session'] )
+        kwargs = dict(name=self.params['name'])
         return json.loads(self.session_client.get_available_commands(**kwargs).text)
 
     def get_session_detail(self):
-        kwargs = dict( name=self.params['session'] )
+        kwargs = dict(name=self.params['name'])
         return json.loads(self.session_client.get_session_info(**kwargs).text)
 
     def get_session_list(self):
@@ -262,63 +294,59 @@ class CSMGatherInfo(CSMClientBase):
         return json.loads(self.session_client.get_session_overviews_short().text)
 
     def get_session_option_list(self):
-        kwargs = dict( name=self.params['session'] )
+        kwargs = dict(name=self.params['name'])
         try:
             return json.loads(self.session_client.get_session_options(**kwargs).text)
-        except:
-            return []
+        except ValueError:
+            self.subset_opt_error("session_option_list", kwargs)
 
     def get_session_recovered_backup_detail(self):
-        kwargs = dict( name=self.params['session'],
-                       backup_id=self.params['backup_id']
-                 )
+        kwargs = dict(name=self.params['name'],
+                      backup_id=self.params['backup_id'])
         return json.loads(self.session_client.get_recovered_backup_details(**kwargs).text)
 
     def get_session_recovered_backup_list(self):
-        kwargs = dict( name=self.params['session'] )
+        kwargs = dict(name=self.params['name'])
         return json.loads(self.session_client.get_recovered_backups(**kwargs).text)
 
-    def get_session_rolepair(self):
-        kwargs = dict( name=self.params['session'],
-                       rolepair=self.params['rolepair']
-                 )
+    def get_session_rolepair_list(self):
+        kwargs = dict(name=self.params['name'],
+                      rolepair=self.params['rolepair'])
         try:
             return json.loads(self.session_client.get_rolepair_info(**kwargs).text)
-        except:
-            return []
+        except ValueError:
+            self.subset_opt_error("session_rolepair_list", kwargs)
 
     def get_session_snapshot_clone_detail(self):
-        kwargs = dict( name=self.params['session'],
-                       snapshot_name=self.params['snapshot']
-                 )
+        kwargs = dict(name=self.params['name'],
+                      snapshot_name=self.params['snapshot'])
         try:
             return json.loads(self.session_client.get_snapshot_clone_details_by_name(**kwargs).text)
-        except:
-            return []
+        except ValueError:
+            self.subset_opt_error("session_snapshot_clone_detail", kwargs)
 
     def get_session_snapshot_clone_list(self):
-        kwargs = dict( name=self.params['session'] )
+        kwargs = dict(name=self.params['name'])
         try:
             return json.loads(self.session_client.get_snapshot_clones(**kwargs).text)
-        except:
-            return []
+        except ValueError:
+            self.subset_opt_error("session_snapshot_clone_list", kwargs)
 
     def get_session_snapshot_detail(self):
-        kwargs = dict( name=self.params['session'],
-                       role=self.params['role'],
-                       snapshot_name=self.params['snapshot']
-                 )
+        kwargs = dict(name=self.params['name'],
+                      role=self.params['role'],
+                      snapshot_name=self.params['snapshot'])
         try:
             return json.loads(self.session_client.get_snapshot_details_by_name(**kwargs).text)
-        except:
-            return []
+        except ValueError:
+            self.subset_opt_error("session_snapshot_detail", kwargs)
 
     def get_system_log_event_list(self):
         kwargs = {}
         if self.module.params['count'] and self.module.params['count'] > 0:
             kwargs['count'] = self.module.params['count']
-        if self.module.params['session'] and len(self.module.params['session']) > 0:
-            kwargs['session'] = self.module.params['session']
+        if self.module.params['name'] and len(self.module.params['name']) > 0:
+            kwargs['name'] = self.module.params['name']
         return json.loads(self.system_client.get_log_events(**kwargs).text)
 
     def get_system_log_packages_list(self):
@@ -327,7 +355,7 @@ class CSMGatherInfo(CSMClientBase):
     def get_system_session_supported_list(self):
         return json.loads(self.system_client.get_session_types().text)
 
-    def get_system_version(self):
+    def get_system_version_list(self):
         return json.loads(self.system_client.get_server_version().text)
 
     def get_system_volume_count_list(self):
@@ -337,10 +365,10 @@ class CSMGatherInfo(CSMClientBase):
 
         # Queries that do not require arguments
 
-        no_opts = [ 'hardware_path_list', 'scheduled_task_list', 'session_list',
-                    'session_list_short', 'system_log_event_list', 'system_log_packages_list', 
-                    'system_session_supported_list', 'system_version', 'system_volume_count_list'
-                  ]
+        no_opts = ['hardware_path_list', 'scheduled_task_list', 'session_list',
+                   'session_list_short', 'system_log_event_list', 'system_log_packages_list',
+                   'system_session_supported_list', 'system_version_list',
+                   'system_volume_count_list']
 
         subset = self.module.params['gather_subset']
         if len(subset) == 0 or 'all' in subset:
@@ -348,7 +376,7 @@ class CSMGatherInfo(CSMClientBase):
 
             # Add the other queries for 'all' if we have the options needed for them.
 
-            if self.module.params['session'] and len(self.module.params['session']) > 0:
+            if self.module.params['name'] and len(self.module.params['name']) > 0:
                 subset.append('copyset_list')
                 subset.append('session_command_list')
                 subset.append('session_detail')
@@ -358,7 +386,7 @@ class CSMGatherInfo(CSMClientBase):
 
                 if self.module.params['rolepair'] and len(self.module.params['rolepair']) > 0:
                     subset.append('copyset_pair_list')
-                    subset.append('session_rolepair')
+                    subset.append('session_rolepair_list')
 
                 if self.module.params['backup_id'] and self.module.params['backup_id'] > 0:
                     subset.append('session_recovered_backup_detail')
@@ -385,7 +413,7 @@ class CSMGatherInfo(CSMClientBase):
                 subset.append('hardware_volume_list_by_wwn')
 
         query_result = {}
-        query_result['changed'] = False;
+        query_result['changed'] = False
 
         if 'copyset_list' in subset:
             query_result['copyset_list'] = self.get_copyset_list()
@@ -419,8 +447,8 @@ class CSMGatherInfo(CSMClientBase):
             query_result['session_recovered_backup_detail'] = self.get_session_recovered_backup_detail()
         if 'session_recovered_backup_list' in subset:
             query_result['session_recovered_backup_list'] = self.get_session_recovered_backup_list()
-        if 'session_rolepair' in subset:
-            query_result['session_rolepair'] = self.get_session_rolepair()
+        if 'session_rolepair_list' in subset:
+            query_result['session_rolepair'] = self.get_session_rolepair_list()
         if 'session_snapshot_clone_detail' in subset:
             query_result['session_snapshot_clone_detail'] = self.get_session_snapshot_clone_detail()
         if 'session_snapshot_clone_list' in subset:
@@ -433,8 +461,8 @@ class CSMGatherInfo(CSMClientBase):
             query_result['system_log_packages_list'] = self.get_system_log_packages_list()
         if 'system_session_supported_list' in subset:
             query_result['system_session_supported_list'] = self.get_system_session_supported_list()
-        if 'system_version' in subset:
-            query_result['system_version'] = self.get_system_version()
+        if 'system_version_list' in subset:
+            query_result['system_version'] = self.get_system_version_list()
         if 'system_volume_count_list' in subset:
             query_result['system_volume_count_list'] = self.get_system_volume_count_list()
 
@@ -467,19 +495,18 @@ def main():
                                     'session_option_list',
                                     'session_recovered_backup_detail',
                                     'session_recovered_backup_list',
-                                    'session_rolepair',
+                                    'session_rolepair_list',
                                     'session_snapshot_clone_detail',
                                     'session_snapshot_clone_list',
                                     'session_snapshot_detail',
                                     'system_log_event_list',
                                     'system_log_packages_list',
                                     'system_session_supported_list',
-                                    'system_version',
-                                    'system_volume_count_list'
-                           ]),
+                                    'system_version_list',
+                                    'system_volume_count_list']),
+        name=dict(type='str'),
         role=dict(type='str'),
         rolepair=dict(type='str'),
-        session=dict(type='str'),
         snapshot=dict(type='str'),
         system_id=dict(type='str'),
         system_name=dict(type='str'),
