@@ -17,7 +17,7 @@
     - name: Issue query for all items.
       ibm.csm.ibm_csm_info:
         gather_subset: "{{ subset }}"
-        session: "{{ session }}"
+        name: "{{ session }}"
         role: "{{ role }}"
         rolepair: "{{ rolepair }}"
         device_type: "{{ devtype }}"
@@ -27,5 +27,5 @@
         snapshot: "{{ snapshot }}"
         wwn_name: "{{ wwn }}"
         backup_id: "{{ backupid }}"
-        count: 10
+        count: "{{ msgcount }}"
       register: result

@@ -61,6 +61,7 @@ options:
       - system_log_packages_list
       - system_session_supported_list
       - system_version_list
+      - system_volume_count_list
     default: all
     description:
       - List of string variables to specify the CSM objects to retrieve info for.
@@ -224,9 +225,9 @@ import json
 class CSMGatherInfo(CSMClientBase):
 
     def subset_opt_error(self, subset, option):
-        error_msg = "Subset {} failed.  Required parameters and values:".format(subset)
+        error_msg = "Subset {0} failed.  Required parameters and values:".format(subset)
         for key, value in option.items():
-            error_msg += "  {}={}".format(key, value)
+            error_msg += "  {0}={1}".format(key, value)
         self.module.fail_json(msg=error_msg)
 
     def get_copyset_list(self):
@@ -524,6 +525,7 @@ def main():
         gather_info.run_query()
     except Exception as e:
         gather_info.module.fail_json(msg="Module failed. Error [%s]." % to_native(e))
+
 
 if __name__ == '__main__':
     main()
