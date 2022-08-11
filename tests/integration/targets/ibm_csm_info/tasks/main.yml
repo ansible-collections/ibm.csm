@@ -1,0 +1,31 @@
+# Copyright (C) 2022 IBM CORPORATION
+# Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
+
+####################################################################
+# WARNING: These are designed specifically for Ansible tests       #
+# and should not be used as examples of how to write Ansible roles #
+####################################################################
+---
+- name: "ibm_csm_info integration tests"
+  module_defaults:
+    group/ibm.csm.ibm_csm_client:
+      hostname: "{{ csm_host }}"
+      username: "{{ csm_username }}"
+      password: "{{ csm_password }}"
+
+  block:
+    - name: Issue query for all items.
+      ibm.csm.ibm_csm_info:
+        gather_subset: "{{ subset }}"
+        name: "{{ session }}"
+        role: "{{ role }}"
+        rolepair: "{{ rolepair }}"
+        device_type: "{{ devtype }}"
+        device_id: "{{ devid }}"
+        system_id: "{{ sysid }}"
+        system_name: "{{ sysname }}"
+        snapshot: "{{ snapshot }}"
+        wwn_name: "{{ wwn }}"
+        backup_id: "{{ backupid }}"
+        count: "{{ msgcount }}"
+      register: result
