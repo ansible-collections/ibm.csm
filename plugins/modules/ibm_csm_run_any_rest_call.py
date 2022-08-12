@@ -59,7 +59,7 @@ EXAMPLES = r'''
     password: "{{ csm_password }}"
     url: https://localhost:9234/CSM/web/system/logpackages
     action: get
-    header: header: {"Accept-Language": en-US,
+    header: {"Accept-Language": en-US,
         "X-Auth-Token": token,
         "Content-Type": "application/x-www-form-urlencoded"}
 
@@ -73,7 +73,7 @@ EXAMPLES = r'''
     data: {"volgroup": test session,
         "type": snap,
         "description": example test session}
-    header: header: {"Accept-Language": en-US,
+    header: {"Accept-Language": en-US,
         "X-Auth-Token": token,
         "Content-Type": "application/x-www-form-urlencoded"}
 
@@ -85,7 +85,7 @@ EXAMPLES = r'''
     url: https://localhost:9234/CSM/web/storagedevices/12
     action: post
     data: {"location": New York}
-    header: header: {"Accept-Language": en-US,
+    header: {"Accept-Language": en-US,
         "X-Auth-Token": token,
         "Content-Type": "application/x-www-form-urlencoded"}
 '''
