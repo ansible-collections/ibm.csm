@@ -22,10 +22,14 @@ options:
       - url for the csm server and the rest call the user wants to run
     required: true
     type: str
+  action:
+  description:
+      - The action to run against the scheduled task  ('put', 'post', 'get', 'delete')
+    required: true
+    type: str
   data:
     description:
       - Dictionary of variables used in the body of a REST call. {"type": device_type, "deviceip": device_ip, "deviceport": device_port,}
-    required: true
     type: dict
   headers:
     description:
@@ -43,6 +47,7 @@ EXAMPLES = r'''
     username: "{{ csm_username }}"
     password: "{{ csm_password }}"
     url: https://localhost:9234/CSM/web/sessions/test_session
+    action: delete
     header: {"Accept-Language": en-US,
         "X-Auth-Token": token,
         "Content-Type": "application/x-www-form-urlencoded"}
@@ -53,6 +58,7 @@ EXAMPLES = r'''
     username: "{{ csm_username }}"
     password: "{{ csm_password }}"
     url: https://localhost:9234/CSM/web/system/logpackages
+    action: get
     header: header: {"Accept-Language": en-US,
         "X-Auth-Token": token,
         "Content-Type": "application/x-www-form-urlencoded"}
@@ -63,6 +69,7 @@ EXAMPLES = r'''
     username: "{{ csm_username }}"
     password: "{{ csm_password }}"
     url: https://localhost:9234/CSM/web/sessions/byvolgroup
+    action: put
     data: {"volgroup": test session,
         "type": snap,
         "description": example test session}
@@ -76,6 +83,7 @@ EXAMPLES = r'''
     username: "{{ csm_username }}"
     password: "{{ csm_password }}"
     url: https://localhost:9234/CSM/web/storagedevices/12
+    action: post
     data: {"location": New York}
     header: header: {"Accept-Language": en-US,
         "X-Auth-Token": token,
@@ -90,26 +98,37 @@ from ansible_collections.ibm.csm.plugins.module_utils.ibm_csm_client import CSMC
 
 class RestCallManager(CSMClientBase):
     def _delete(self):
-        return self.system_client.rest_delete(self.params['url'], self.params['data'], self.params['headers'])
+        return self.system_client.rest_delete(self.params['url'],
+                                              self.params['data'], self.params['headers'])
 
     def _post(self):
-        return self.session_client.run_scheduled_task_at_time(self.params['url'],
-                                                              self.params['data'], self.params['headers'])
+        return self.system_client.rest_post(self.params['url'],
+                                            self.params['data'], self.params['headers'])
 
     def _put(self):
-        return self.session_client.enable_scheduled_task(self.params['url'],
-                                                         self.params['data'], self.params['headers'])
+        return self.system_client.rest_put(self.params['url'],
+                                           self.params['data'], self.params['headers'])
 
     def _get(self):
-        return self.session_client.enable_scheduled_task_at_time(self.params['url'],
-                                                                 self.params['data'], self.params['headers'])
+        return self.system_client.rest_get(self.params['url'],
+                                           self.params['data'], self.params['headers'])
 
+    def perform_task_action(self):
+        if self.params['action'] == 'delete':
+            return self._delete()
+        if self.params['action'] == 'put':
+            return self._put()
+        if self.params['action'] == 'post':
+            return self._post()
+        if self.params['action'] == 'get':
+            return self._get()
 
 
 def main():
     argument_spec = csm_argument_spec()
     argument_spec.update(url=dict(type='str', required=True),
-                         data=dict(type='dict', required=True),
+                         action=dict(type='str', required=True),
+                         data=dict(type='dict'),
                          headers=dict(type='dict'))
 
     module = AnsibleModule(
