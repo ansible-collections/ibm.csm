@@ -28,10 +28,10 @@ options:
     type: str
   type:
     description:
-      - The type of the session that will be created.  
+      - The type of the session that will be created.
       - Required when creating the session.
     type: str
-    choices: 
+    choices:
       - ESESizer
       - FC
       - Snapshot
@@ -65,9 +65,9 @@ options:
   state:
     description:
       - Specify the state of the session. This indicates whether the session should exist and not the replication state.
-    type: str    
+    type: str
     default: present
-    choices: 
+    choices:
       - present
       - absent
   volume_group:
@@ -99,7 +99,7 @@ EXAMPLES = r'''
     name: 'my_three_site_sess'
     state: 'absent'
 
-- name: Create a Spectrum Virtualize Snapshot session from a volume group 
+- name: Create a Spectrum Virtualize Snapshot session from a volume group
   ibm.csm.ibm_csm_session_manage:
     hostname: "{{ csm_host }}"
     username: "{{ csm_username }}"
@@ -164,7 +164,7 @@ def main():
                                                         'MMBasic',
                                                         'MM',
                                                         'MMPracticeOneSite',
-                                                        'MMPracticeOneSiteSVC'
+                                                        'MMPracticeOneSiteSVC',
                                                         'MMCVSVC',
                                                         'GMBasic',
                                                         'GMBasicSVC',
