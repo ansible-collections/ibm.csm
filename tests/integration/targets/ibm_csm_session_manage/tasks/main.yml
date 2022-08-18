@@ -1,0 +1,34 @@
+# Copyright (C) 2022 IBM CORPORATION
+# Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
+
+####################################################################
+# WARNING: These are designed specifically for Ansible tests       #
+# and should not be used as examples of how to write Ansible roles #
+####################################################################
+---
+- name: "ibm_csm_session_manage integration tests"
+  module_defaults:
+    group/ibm.csm.ibm_csm_client:
+      hostname: "{{ csm_host }}"
+      username: "{{ csm_username }}"
+      password: "{{ csm_password }}"
+
+  block:
+    - name: Create a MM session
+      ibm.csm.ibm_csm_session_manage:
+        name: "{{ name }}"
+        description: 'this session manages my replication across three sites'
+        type: 'MM'
+        state: 'present'
+      register: result
+    - name: Update MM session description
+      ibm.csm.ibm_csm_session_manage:
+        name: "{{ name }}"
+        description: 'this session manages my replication across two sites'
+        state: 'present'
+      register: result
+    - name: Update MM session description
+      ibm.csm.ibm_csm_session_manage:
+        name: "{{ name }}"
+        state: 'absent'
+      register: result
