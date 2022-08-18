@@ -65,7 +65,6 @@ options:
   state:
     description:
       - Specify the state of the session. This indicates whether the session should exist and not the replication state.
-    required: true
     type: str    
     default: present
     choices: 
@@ -122,7 +121,7 @@ EXAMPLES = r'''
 RETURN = r''' # '''
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.ibm.csm.plugins.module_utils.ibm_csm_client import CSMClientBase, csm_argument_spec
+from ansible_collections.ibm.csm.plugins.module_utils.ibm_csm_client import CSMClientBase, csm_argument_spec, ABSENT, PRESENT
 
 
 class SessionManager(CSMClientBase):
@@ -155,8 +154,37 @@ def main():
     argument_spec = csm_argument_spec()
     argument_spec.update(name=dict(type='str'),
                          description=dict(type='str'),
-                         type=dict(type='str'),
-                         state=dict(type='str', required=True),
+                         type=dict(type='str', choices=['ESESizer',
+                                                        'FC',
+                                                        'Snapshot',
+                                                        'SGC',
+                                                        'SGCSVC',
+                                                        'SnapshotSVC',
+                                                        'Migration',
+                                                        'MMBasic',
+                                                        'MM',
+                                                        'MMPracticeOneSite',
+                                                        'MMPracticeOneSiteSVC'
+                                                        'MMCVSVC',
+                                                        'GMBasic',
+                                                        'GMBasicSVC',
+                                                        'GM',
+                                                        'GMSVC',
+                                                        'GMPracticeOneSiteSVC',
+                                                        'GMPracticeOneSite',
+                                                        'GMPracticeTwoSite',
+                                                        'GMCVSVC',
+                                                        'GMTwoSite',
+                                                        'GMTwoSiteWithSite3',
+                                                        'MGM',
+                                                        'MGMPRacticeOneSite',
+                                                        'MT_MM_MM',
+                                                        'MT_MM_GM',
+                                                        'MT_MM_GMPractice',
+                                                        'MT_MM_GM_Site3GM',
+                                                        'MT_MM_GM_4Site',
+                                                        'MT_MM_MM_4Site']),
+                         state=dict(type='str', default=PRESENT, choices=[ABSENT, PRESENT]),
                          volume_group=dict(type='str'))
 
     module = AnsibleModule(
