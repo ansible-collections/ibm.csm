@@ -136,14 +136,14 @@ class ScheduledTaskManager(CSMClientBase):
             if self.params['at_time'] is None:
                 task_result = self._run_task_now()
             else:
-                task_result =  self._run_task_at_time()
+                task_result = self._run_task_at_time()
         if self.params['action'] == 'enable':
             if self.params['at_time'] is None:
-                task_result =  self._enable_task()
+                task_result = self._enable_task()
             else:
-                task_result =  self._enable_task_at_time()
+                task_result = self._enable_task_at_time()
         if self.params['action'] == 'disable':
-            task_result =  self._disable_task()
+            task_result = self._disable_task()
 
         json_result = task_result.json()
         if json_result['msg'].endswith('E'):

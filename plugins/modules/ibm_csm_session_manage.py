@@ -175,9 +175,9 @@ class SessionManager(CSMClientBase):
         json_result = delete_result.json()
         if json_result['msg'].endswith('E'):
             # set the call to failed if there is any E message
-            self._handle_error("Failed to delete the session. ERR: {error}".format(
-                    name=self.params['name'],
-                    error=to_native(json_result['msgTranslated'])), json_result)
+            self._handle_error("Failed to delete session {name}. ERR: {error}"
+                               .format(name=self.params['name'],
+                                       error=to_native(json_result['msgTranslated'])), json_result)
 
         else:
             self.changed = True
