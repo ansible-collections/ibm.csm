@@ -27,8 +27,24 @@
         description: 'this session manages my replication across two sites'
         state: 'present'
       register: result
-    - name: Update MM session description
+    - name: Delete the MM session
       ibm.csm.ibm_csm_session_manage:
         name: "{{ name }}"
         state: 'absent'
       register: result
+    - name: Try creating the session again...should be successful but return IWNR1019E message still
+      ibm.csm.ibm_csm_session_manage:
+        name: "{{ name }}"
+        type: 'MM'
+        state: 'present'
+    - name: Try deleting a session that doesn't exist
+      ibm.csm.ibm_csm_session_manage:
+        name: "{{ session_non_existent }}"
+        state: 'absent'
+      register: result
+      ignore_errors: yes
+    - name: Verify the non existent name failed
+      ansible.builtin.assert:
+        that:
+          - result is failure
+          - result is not changed
