@@ -122,31 +122,87 @@ RETURN = r''' # '''
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.ibm.csm.plugins.module_utils.ibm_csm_client import CSMClientBase, csm_argument_spec, ABSENT, PRESENT
+from ansible.module_utils._text import to_native
+import json
 
 
 class SessionManager(CSMClientBase):
     def _create_or_update_session(self):
-        query_result = self.session_client.get_session_info(self.params['name']).json()
-        if query_result['msg'] == 'IWNR1502E':
-            return self.session_client.create_session(self.params['name'], self.params['type'],
-                                                      self.params['description'])
+        if self.params['type'] is not None:
+            create_result = self.session_client.create_session(self.params['name'], self.params['type'],
+                                                               self.params['description'])
+        elif self.params['description'] is not None:
+            create_result = self.session_client.modify_session_description(self.params['name'],
+                                                                           self.params['description'])
         else:
-            return self.session_client.modify_session_description(self.params['name'], self.params['description'])
+            return self._handle_error("Failed to create the session {name} or modify the description. "
+                                      "Type is required when creating the session and description "
+                                      "is required when modifying the session. "
+                                      .format(name=self.params['name']))
+
+        # was the session created or modified
+        json_result = create_result.json()
+        if json_result['msg'].endswith('E') and json_result['msg'] != 'IWNR1019E':
+            # set the call to failed if there is any E message other than IWNR1019E (already exists)
+            self._handle_error("Failed to create the session {name} or modify the description. "
+                               "ERR: {error}".format(name=self.params['name'],
+                                                     error=to_native(json_result['msgTranslated'])),
+                               json_result)
+
+        else:
+            self.changed = True
+
+        return json_result
 
     def _create_session_by_volume_group(self):
-        return self.session_client.create_session_by_volgroup_name(self.params['volume_group'], self.params['type'],
-                                                                   self.params['description'])
+        create_result = self.session_client.create_session_by_volgroup_name(self.params['volume_group'],
+                                                                            self.params['type'],
+                                                                            self.params['description'])
+
+        json_result = create_result.json()
+        if json_result['msg'].endswith('E') and json_result['msg'] != 'IWNR1019E':
+            # set the call to failed if there is any E message other than IWNR1019E (already exists)
+            self._handle_error("Failed to create the session {name}. ERR: {error}".format(
+                name=self.params['name'], error=to_native(json_result['msgTranslated'])), json_result)
+        else:
+            self.changed = True
+
+        return json_result
 
     def _delete_session(self):
-        return self.session_client.delete_session(self.params['name'])
+        delete_result = self.session_client.delete_session(self.params['name'])
+
+        json_result = delete_result.json()
+        if json_result['msg'].endswith('E'):
+            # set the call to failed if there is any E message
+            self._handle_error("Failed to delete the session. ERR: {error}".format(
+                    name=self.params['name'],
+                    error=to_native(json_result['msgTranslated'])), json_result)
+
+        else:
+            self.changed = True
+
+        return json_result
+
+    def _handle_error(self, msg, server_result=None):
+        create_result = {'msg': msg}
+        self.failed = True
+        if server_result is None:
+            server_result = {'result': "No server result returned"}
+        self.module.fail_json(
+            msg=create_result['msg'],
+            server_result={'server_result': server_result}
+        )
+        return json.dumps(create_result, indent=4)
 
     def manage_session(self):
-        if self.params['state'] == 'present':
+        if self.params['state'] == PRESENT:
             if self.params['name'] is None:
                 return self._create_session_by_volume_group()
             else:
                 return self._create_or_update_session()
-        if self.params['state'] == 'absent':
+
+        if self.params['state'] == ABSENT:
             return self._delete_session()
 
 
@@ -194,9 +250,14 @@ def main():
 
     session_manager = SessionManager(module)
 
-    result = session_manager.manage_session()
-
-    module.exit_json(changed=session_manager.changed, result=result.json())
+    try:
+        result = session_manager.manage_session()
+        if session_manager.failed:
+            module.fail_json(changed=session_manager.changed, result=result)
+        else:
+            module.exit_json(changed=session_manager.changed, result=result)
+    except Exception as e:
+        session_manager.module.fail_json(msg="Module failed. Error [%s]." % to_native(e))
 
 
 if __name__ == '__main__':
