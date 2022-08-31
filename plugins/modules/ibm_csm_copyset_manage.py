@@ -26,7 +26,7 @@ options:
     description:
       - List of the roles depicting the order of the volumes input for each copy set.
       - Ignored when state is absent
-    type: str  
+    type: str
   state:
     description:
       - Indicates whether to create or delete the copy sets.
@@ -40,21 +40,21 @@ options:
       - List of all copy sets in the session to be managed.  A copy set is a list of one or more volumes.
     type: str
     required: true
-  
+
   force:
     description:
       - If true the copy set will be removed from the session even if there are errors on the hardware
       - Only valid when state is absent
     type: bool
     default: False
-    
+
   keeponhw:
     description:
       - If true, the base hardware relationship will remain on the hardware but the copy set will be removed from the session
       - Only valid when state is absent
     type: bool
     default: False
-    
+
 notes:
   - Supports C(check_mode).
 extends_documentation_fragment: ibm.csm.csm_client_fragment.documentation
@@ -80,7 +80,7 @@ EXAMPLES = r'''
     name: 'mysessname'
     state: 'absent'
     copysets: "['DS8000:2107.KTLM1:VOL:0001','DS8000:2107.GXZ91:VOL:D004']"
-    
+
 - name: Force delete two copy sets from the session
   ibm.csm.ibm_csm_copyset_manage:
     hostname: "{{ csm_host }}"
@@ -160,7 +160,7 @@ def main():
     argument_spec.update(name=dict(type='str', required=True),
                          role_order=dict(type='str'),
                          state=dict(type='str', default=PRESENT, choices=[ABSENT, PRESENT]),
-                         copysets=dict(type='str'),
+                         copysets=dict(type='str', required=True),
                          force=dict(type='bool', default=False),
                          keeponhw=dict(type='bool', default=False))
 
