@@ -97,6 +97,8 @@ RETURN = r''' # '''
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.ibm.csm.plugins.module_utils.ibm_csm_client import CSMClientBase, csm_argument_spec
+from ansible.module_utils._text import to_native
+import json
 
 
 class ScheduledTaskManager(CSMClientBase):
@@ -118,19 +120,38 @@ class ScheduledTaskManager(CSMClientBase):
     def _disable_task(self):
         return self.session_client.disable_scheduled_task(self.params['id'])
 
+    def _handle_error(self, msg, server_result=None):
+        create_result = {'msg': msg}
+        self.failed = True
+        if server_result is None:
+            server_result = {'result': "No server result returned"}
+        self.module.fail_json(
+            msg=create_result['msg'],
+            server_result={'server_result': server_result}
+        )
+        return json.dumps(create_result, indent=4)
+
     def perform_task_action(self):
         if self.params['action'] == 'run':
             if self.params['at_time'] is None:
-                return self._run_task_now()
+                task_result = self._run_task_now()
             else:
-                return self._run_task_at_time()
+                task_result = self._run_task_at_time()
         if self.params['action'] == 'enable':
             if self.params['at_time'] is None:
-                return self._enable_task()
+                task_result = self._enable_task()
             else:
-                return self._enable_task_at_time()
+                task_result = self._enable_task_at_time()
         if self.params['action'] == 'disable':
-            return self._disable_task()
+            task_result = self._disable_task()
+
+        json_result = task_result.json()
+        if json_result['msg'].endswith('E'):
+            # set the call to failed if there is any E message
+            self._handle_error("Failed the task command. ERR: {error}".format(
+                error=to_native(json_result['msgTranslated'])), json_result)
+
+        return json_result
 
 
 def main():
@@ -147,9 +168,14 @@ def main():
 
     scheduled_task_manager = ScheduledTaskManager(module)
 
-    result = scheduled_task_manager.perform_task_action()
-
-    module.exit_json(changed=scheduled_task_manager.changed, result=result.json())
+    try:
+        result = scheduled_task_manager.perform_task_action()
+        if scheduled_task_manager.failed:
+            module.fail_json(changed=scheduled_task_manager.changed, result=result)
+        else:
+            module.exit_json(changed=scheduled_task_manager.changed, result=result)
+    except Exception as e:
+        scheduled_task_manager.module.fail_json(msg="Module failed. Error [%s]." % to_native(e))
 
 
 if __name__ == '__main__':

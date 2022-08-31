@@ -75,9 +75,9 @@ jobs:
         working-directory: ./ansible_collections/${{env.NAMESPACE}}/${{env.COLLECTION_NAME}}
 
       # See the reports at https://codecov.io/gh/GITHUBORG/REPONAME
-      - uses: codecov/codecov-action@v1
-        with:
-          fail_ci_if_error: false
+#      - uses: codecov/codecov-action@v1
+#        with:
+#          fail_ci_if_error: false
 
 # ###
 # # Unit tests (OPTIONAL)
