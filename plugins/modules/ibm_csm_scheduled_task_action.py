@@ -157,7 +157,7 @@ class ScheduledTaskManager(CSMClientBase):
 def main():
     argument_spec = csm_argument_spec()
     argument_spec.update(id=dict(type='str', required=True),
-                         action=dict(type='str', required=True),
+                         action=dict(type='str', required=True, choices=['run', 'enable', 'disable']),
                          synchronous=dict(type='bool'),
                          at_time=dict(type='str'))
 

@@ -1,0 +1,30 @@
+# Copyright (C) 2022 IBM CORPORATION
+# Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
+
+####################################################################
+# WARNING: These are designed specifically for Ansible tests       #
+# and should not be used as examples of how to write Ansible roles #
+####################################################################
+---
+- name: "ibm_csm_active_standby_action integration tests"
+  module_defaults:
+    group/ibm.csm.ibm_csm_client:
+      hostname: "{{ csm_host }}"
+      username: "{{ csm_username }}"
+      password: "{{ csm_password }}"
+
+  block:
+    - name: Set this server as a standby to the server specified
+      ibm.csm.ibm_csm_active_standby_action:
+        csm_server: "{{ csm_active_host }}"
+        action: 'set_server_as_standby'
+      register: result
+    - name: Issue a takeover on the standby server
+      ibm.csm.ibm_csm_active_standby_action:
+        action: 'takeover'
+      register: result
+    - name: Remove the standby server
+      ibm.csm.ibm_csm_active_standby_action:
+        csm_server: "{{ csm_standby_host }}"
+        action: 'remove'
+      register: result
