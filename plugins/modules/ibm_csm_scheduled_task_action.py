@@ -27,6 +27,10 @@ options:
       - The action to run against the scheduled task  ('run', 'enable', 'disable')
     required: true
     type: str
+    choices:
+      - run
+      - enable
+      - disable
   synchronous:
     description:
       - Valid when action is 'run'.  If True, won't return from call until task has completed the run.

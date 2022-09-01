@@ -26,6 +26,10 @@ options:
       - The action to run. ('set_server_as_standby', 'takeover', 'remove')
     required: true
     type: str
+    choices:
+      - set_server_as_standby
+      - takeover
+      - remove
 notes:
   - Supports C(check_mode).
 extends_documentation_fragment: ibm.csm.csm_client_fragment.documentation
