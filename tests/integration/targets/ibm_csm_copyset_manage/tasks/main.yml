@@ -1,0 +1,29 @@
+# Copyright (C) 2022 IBM CORPORATION
+# Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
+
+####################################################################
+# WARNING: These are designed specifically for Ansible tests       #
+# and should not be used as examples of how to write Ansible roles #
+####################################################################
+---
+- name: "ibm_csm_copyset_manage integration tests"
+  module_defaults:
+    group/ibm.csm.ibm_csm_client:
+      hostname: "{{ csm_host }}"
+      username: "{{ csm_username }}"
+      password: "{{ csm_password }}"
+
+  block:
+    - name: Add multiple copy sets to a session
+      ibm.csm.ibm_csm_copyset_manage:
+        name: "{{ name }}"
+        role_order: "['H1', 'T1']"
+        copysets: "[['DS8000:2107.GXZ91:VOL:0001','DS8000:2107.GXZ91:VOL:0101'],['DS8000:2107.GXZ91:VOL:D000','DS8000:2107.GXZ91:VOL:D001']]"
+        state: 'present'
+      register: result
+    - name: Delete multiple copy sets from a session
+      ibm.csm.ibm_csm_copyset_manage:
+        name: "{{ name }}"
+        state: 'absent'
+        copysets: "['DS8000:2107.GXZ91:VOL:0001','DS8000:2107.GXZ91:VOL:D000']"
+      register: result
