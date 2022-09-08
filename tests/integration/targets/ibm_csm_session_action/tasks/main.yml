@@ -1,0 +1,27 @@
+# Copyright (C) 2022 IBM CORPORATION
+# Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
+
+####################################################################
+# WARNING: These are designed specifically for Ansible tests       #
+# and should not be used as examples of how to write Ansible roles #
+####################################################################
+---
+- name: "ibm_csm_session_action integration tests"
+  module_defaults:
+    group/ibm.csm.ibm_csm_client:
+      hostname: "{{ csm_host }}"
+      username: "{{ csm_username }}"
+      password: "{{ csm_password }}"
+
+  block:
+    - name: Start the session
+      ibm.csm.ibm_csm_session_action:
+        name: 'sessionA'
+        command: 'Start H1->H2'
+      register: result
+    - name: Recover session to a given backup
+      ibm.csm.ibm_csm_session_action:
+        name: 'sessionA'
+        command: 'Recover Backup'
+        backup_id: '1662577200'
+      register: result
