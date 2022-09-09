@@ -37,7 +37,7 @@ options:
   gather_error_fail:
     default: true
     description:
-      - Fails the modue when an error is encountered.  If set to false, the errors will be
+      - Fails the module when an error is encountered.  If set to false, the errors will be
         collected and output as a list named gather_errors.
     type: bool
   gather_subset:
@@ -68,6 +68,7 @@ options:
       - system_session_supported_list
       - system_version_list
       - system_volume_count_list
+      - system_active_standby_status
     default: all
     description:
       - List of string variables to specify the CSM objects to retrieve info for.
@@ -116,6 +117,7 @@ options:
       - system_session_supported_list - List the supported session types.
       - system_version_list - The version of the server being called.
       - system_volume_count_list - List the volume usage on the server.
+      - system_active_standby_status - Detailed status for active and standby server connection.
     elements: str
     type: list
   name:
@@ -204,7 +206,7 @@ EXAMPLES = r'''
     username: "{{ csm_username }}"
     password: "{{ csm_password }}"
     gather_subset: hardware_volume_list_by_wwn
-    wwn: 6005076812810039f8000000000000
+    wwn_name: 6005076812810039f8000000000000
 
 - name: Retrieve snapshot and snapshot clone information for a session.
   ibm.csm.ibm_csm_info:
@@ -218,6 +220,13 @@ EXAMPLES = r'''
     role: H1
     name: Test_FC2_LBSFS5200A
     snapshot: snapshot0
+    
+- name: Retrieve the active/standby status for the server
+  ibm.csm.ibm_csm_info:
+    hostname: "{{ csm_host }}"
+    username: "{{ csm_username }}"
+    password: "{{ csm_password }}"
+    gather_subset: system_active_standby_status
 '''
 
 RETURN = r''' # '''
@@ -372,6 +381,9 @@ class CSMGatherInfo(CSMClientBase):
     def get_system_volume_count_list(self):
         return self.system_client.get_volume_counts().json()
 
+    def get_system_active_standby_status(self):
+        return self.system_client.get_active_standby_status().json()
+
     def run_query(self):
 
         # Queries that do not require arguments
@@ -379,7 +391,7 @@ class CSMGatherInfo(CSMClientBase):
         no_opts = ['hardware_path_list', 'scheduled_task_list', 'session_list',
                    'session_list_short', 'system_log_event_list', 'system_log_packages_list',
                    'system_session_supported_list', 'system_version_list',
-                   'system_volume_count_list']
+                   'system_volume_count_list', 'system_active_standby_status']
 
         subset = self.module.params['gather_subset']
         if len(subset) == 0 or 'all' in subset:
@@ -476,6 +488,8 @@ class CSMGatherInfo(CSMClientBase):
             query_result['system_version'] = self.get_system_version_list()
         if 'system_volume_count_list' in subset:
             query_result['system_volume_count_list'] = self.get_system_volume_count_list()
+        if 'system_active_standby_status' in subset:
+            query_result['system_active_standby_status'] = self.get_system_active_standby_status()
 
         if not self.params['gather_error_fail']:
             query_result['gather_errors'] = json.loads(json.dumps(self.gather_errors))
@@ -487,7 +501,7 @@ def main():
     argument_spec = csm_argument_spec()
     argument_spec.update(
         backup_id=dict(type='int'),
-        count=dict(type='int'),
+        count=dict(type='int', default=10),
         device_id=dict(type='str'),
         device_type=dict(type='str'),
         gather_error_fail=dict(type='bool', required=False, default=True),
@@ -518,7 +532,8 @@ def main():
                                     'system_log_packages_list',
                                     'system_session_supported_list',
                                     'system_version_list',
-                                    'system_volume_count_list']),
+                                    'system_volume_count_list',
+                                    'system_active_standby_status']),
         name=dict(type='str'),
         role=dict(type='str'),
         rolepair=dict(type='str'),
