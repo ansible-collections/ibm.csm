@@ -221,7 +221,7 @@ EXAMPLES = r'''
     role: H1
     name: Test_FC2_LBSFS5200A
     snapshot: snapshot0
-    
+
 - name: Retrieve the active/standby status for the server
   ibm.csm.ibm_csm_info:
     hostname: "{{ csm_host }}"
