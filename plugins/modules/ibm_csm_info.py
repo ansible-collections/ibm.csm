@@ -26,6 +26,7 @@ options:
     description:
       - The number of messages to return.
     type: int
+    default: 10
   device_id:
     description:
       - The ID of the storage system. The cluster name on a FlashSystem. (example - lbsfs5200A)
