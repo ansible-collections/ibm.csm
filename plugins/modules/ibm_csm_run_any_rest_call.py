@@ -17,13 +17,13 @@ description:
 version_added: "1.0.0"
 author: Dominic Blea (@dblea00)
 options:
-  url:
+  path_resource:
     description:
-      - url for the csm server and the rest call the user wants to run
+      - path_resource is the part of the request url that determines the resource for the rest call to run.
     required: true
     type: str
   action:
-  description:
+    description:
       - The action to run against the scheduled task  ('put', 'post', 'get', 'delete')
     required: true
     type: str
@@ -46,7 +46,7 @@ EXAMPLES = r'''
     hostname: "{{ csm_host }}"
     username: "{{ csm_username }}"
     password: "{{ csm_password }}"
-    url: https://localhost:9234/CSM/web/sessions/test_session
+    path_resource: sessions/test_session
     action: delete
     header: {"Accept-Language": en-US,
         "X-Auth-Token": token,
@@ -57,7 +57,7 @@ EXAMPLES = r'''
     hostname: "{{ csm_host }}"
     username: "{{ csm_username }}"
     password: "{{ csm_password }}"
-    url: https://localhost:9234/CSM/web/system/logpackages
+    path_resource: system/logpackages
     action: get
     header: {"Accept-Language": en-US,
         "X-Auth-Token": token,
@@ -68,7 +68,7 @@ EXAMPLES = r'''
     hostname: "{{ csm_host }}"
     username: "{{ csm_username }}"
     password: "{{ csm_password }}"
-    url: https://localhost:9234/CSM/web/sessions/byvolgroup
+    path_resource: sessions/byvolgroup
     action: put
     data: {"volgroup": test session,
         "type": snap,
@@ -82,7 +82,7 @@ EXAMPLES = r'''
     hostname: "{{ csm_host }}"
     username: "{{ csm_username }}"
     password: "{{ csm_password }}"
-    url: https://localhost:9234/CSM/web/storagedevices/12
+    path_resource: storagedevices/12
     action: post
     data: {"location": New York}
     header: {"Accept-Language": en-US,
@@ -98,22 +98,22 @@ from ansible_collections.ibm.csm.plugins.module_utils.ibm_csm_client import CSMC
 
 class RestCallManager(CSMClientBase):
     def _delete(self):
-        return self.system_client.rest_delete(self.params['url'],
+        return self.system_client.rest_delete(self._build_url(),
                                               self.params['data'], self.params['headers'])
 
     def _post(self):
-        return self.system_client.rest_post(self.params['url'],
+        return self.system_client.rest_post(self._build_url(),
                                             self.params['data'], self.params['headers'])
 
     def _put(self):
-        return self.system_client.rest_put(self.params['url'],
+        return self.system_client.rest_put(self._build_url(),
                                            self.params['data'], self.params['headers'])
 
     def _get(self):
-        return self.system_client.rest_get(self.params['url'],
+        return self.system_client.rest_get(self._build_url(),
                                            self.params['data'], self.params['headers'])
 
-    def perform_task_action(self):
+    def perform_rest_action(self):
         if self.params['action'] == 'delete':
             return self._delete()
         if self.params['action'] == 'put':
@@ -123,10 +123,12 @@ class RestCallManager(CSMClientBase):
         if self.params['action'] == 'get':
             return self._get()
 
+    def _build_url(self):
+        return 'https://' + self.params['hostname'] + ':/CSM/web/' + self.params['path_resource']
 
 def main():
     argument_spec = csm_argument_spec()
-    argument_spec.update(url=dict(type='str', required=True),
+    argument_spec.update(path_resource=dict(type='str', required=True),
                          action=dict(type='str', required=True),
                          data=dict(type='dict'),
                          headers=dict(type='dict'))
@@ -138,7 +140,7 @@ def main():
 
     rest_call_manager = RestCallManager(module)
 
-    result = rest_call_manager.perform_task_action()
+    result = rest_call_manager.perform_rest_action()
 
     module.exit_json(changed=rest_call_manager.changed, result=result.json())
 
