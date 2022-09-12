@@ -67,9 +67,9 @@ Tested with the current Ansible 2.9, 2.10, 2.11, 2.12 releases and the current d
 ## External requirements
 
 <!-- List any external resources the collection depends on, for example minimum versions of an OS, libraries, or utilities. Do not list other Ansible collections here. -->
-| Name               | Minimum Version                        |
-| ------------------ | -------------------------------------- |
-| pycsm              | v1.0.0                                 |
+| Name               | Minimum Version |
+| ------------------ |-----------------|
+| pycsm              | v1.0.1          |
 
 ### Supported connections
 <!-- Optional. If your collection supports only specific connection types (such as HTTPAPI, netconf, or others), list them here. -->

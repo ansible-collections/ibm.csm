@@ -30,6 +30,7 @@ options:
       - set_server_as_standby
       - takeover
       - remove
+      - reconnect
 notes:
   - Supports C(check_mode).
 extends_documentation_fragment: ibm.csm.csm_client_fragment.documentation
@@ -79,6 +80,9 @@ class ActiveStandbyManager(CSMClientBase):
     def _remove(self):
         return self.system_client.remove_active_or_standby_server(self.params['csm_server'])
 
+    def _reconnect(self):
+        return self.system_client.reconnect_active_standby_server()
+
     def _handle_error(self, msg, server_result=None):
         result = {'msg': msg}
         self.failed = True
@@ -97,6 +101,8 @@ class ActiveStandbyManager(CSMClientBase):
             result = self._takeover()
         elif self.params['action'] == 'remove':
             result = self._remove()
+        elif self.params['reconnect'] == 'reconnect':
+            result = self._reconnect()
 
         json_result = result.json()
         if json_result['msg'].endswith('E'):
@@ -111,7 +117,7 @@ def main():
     argument_spec = csm_argument_spec()
     argument_spec.update(csm_server=dict(type='str'),
                          action=dict(type='str', required=True,
-                                     choices=['set_server_as_standby', 'takeover', 'remove']))
+                                     choices=['set_server_as_standby', 'takeover', 'remove', 'reconnect']))
 
     module = AnsibleModule(
         argument_spec=argument_spec,
