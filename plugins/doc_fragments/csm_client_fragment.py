@@ -40,6 +40,6 @@ class ModuleDocFragment(object):
     notes:
       - For a secure connection add value 'cert' to the call_properties with the certificate.
     requirements:
-      - pyCSM >= 1.0.0
+      - pyCSM >= 1.0.1
       - python >= 3.6
     '''
