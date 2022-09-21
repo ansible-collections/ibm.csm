@@ -1,0 +1,52 @@
+# Copyright (C) 2022 IBM CORPORATION
+# Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
+
+####################################################################
+# WARNING: These are designed specifically for Ansible tests       #
+# and should not be used as examples of how to write Ansible roles #
+####################################################################
+---
+- name: "ibm_csm_run_any_rest_call integration tests"
+  module_defaults:
+    group/ibm.csm.ibm_csm_client:
+      hostname: "{{ csm_host }}"
+      username: "{{ csm_username }}"
+      password: "{{ csm_password }}"
+
+  block:
+    - name: Run rest delete
+      ibm.csm.ibm_csm_run_any_rest_call:
+        path_resource: sessions/test_session
+        action: delete
+        header: {"Accept-Language": en-US,
+            "X-Auth-Token": "token",
+            "Content-Type": "application/x-www-form-urlencoded"}
+      register: result
+    - name: Run rest get
+      ibm.csm.ibm_csm_run_any_rest_call:
+        path_resource: system/logpackages
+        action: get
+        header: {"Accept-Language": en-US,
+            "X-Auth-Token": "token",
+            "Content-Type": "application/x-www-form-urlencoded"}
+      register: result
+    - name: Run rest put
+      ibm.csm.ibm_csm_run_any_rest_call:
+        path_resource: sessions/byvolgroup
+        action: put
+        data: {"volgroup": test session,
+            "type": snap,
+            "description": example test session}
+        header: {"Accept-Language": en-US,
+            "X-Auth-Token": "token",
+            "Content-Type": "application/x-www-form-urlencoded"}
+      register: result
+    - name: Run rest post
+      ibm.csm.ibm_csm_run_any_rest_call:
+        path_resource: storagedevices/12
+        action: post
+        data: {"location": New York}
+        header: {"Accept-Language": en-US,
+            "X-Auth-Token": "token",
+            "Content-Type": "application/x-www-form-urlencoded"}
+      register: result
