@@ -122,6 +122,7 @@ class RestCallManager(CSMClientBase):
     def _build_url(self):
         return 'https://' + self.params['hostname'] + ':' + str(self.params['port']) + '/CSM/web/' + self.params['path_resource']
 
+
 def main():
     argument_spec = csm_argument_spec()
     argument_spec.update(path_resource=dict(type='str', required=True),
