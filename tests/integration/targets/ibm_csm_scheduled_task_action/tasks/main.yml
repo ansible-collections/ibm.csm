@@ -47,3 +47,14 @@
         id: "{{ id }}"
         action: 'disable'
       register: result
+    - name: Enable the task at an invalid time
+      ibm.csm.ibm_csm_scheduled_task_action:
+        id: "{{ id }}"
+        action: 'enable'
+        at_time: '2018-08-09T17-30'
+      register: result
+      ignore_errors: yes
+    - name: Verify the enable task failed
+      ansible.builtin.assert:
+        that:
+          - result is failure
