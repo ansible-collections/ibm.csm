@@ -29,11 +29,11 @@ options:
     type: str
   data:
     description:
-      - Dictionary of variables used in the body of a REST call. {"type": device_type, "deviceip": device_ip, "deviceport": device_port,}
+      - Dictionary of variables used in the body of a REST call. (ex device_type, device_ip, device_port,)
     type: dict
   headers:
     description:
-      - Dictionary of variables used in the headers of a REST call except for the token. {"Accept-Language": properties["language"]}
+      - Dictionary of variables used in the headers of a REST call except for the token. (ex Accept-Language, Content-Type)
     type: dict
 notes:
   - Supports C(check_mode).
