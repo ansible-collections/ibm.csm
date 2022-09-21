@@ -49,7 +49,6 @@ EXAMPLES = r'''
     path_resource: sessions/test_session
     action: delete
     header: {"Accept-Language": en-US,
-        "X-Auth-Token": token,
         "Content-Type": "application/x-www-form-urlencoded"}
 
 - name: Run rest get
@@ -60,7 +59,6 @@ EXAMPLES = r'''
     path_resource: system/logpackages
     action: get
     header: {"Accept-Language": en-US,
-        "X-Auth-Token": token,
         "Content-Type": "application/x-www-form-urlencoded"}
 
 - name: Run rest put
@@ -74,7 +72,6 @@ EXAMPLES = r'''
         "type": snap,
         "description": example test session}
     header: {"Accept-Language": en-US,
-        "X-Auth-Token": token,
         "Content-Type": "application/x-www-form-urlencoded"}
 
 - name: Run rest post
@@ -86,7 +83,6 @@ EXAMPLES = r'''
     action: post
     data: {"location": New York}
     header: {"Accept-Language": en-US,
-        "X-Auth-Token": token,
         "Content-Type": "application/x-www-form-urlencoded"}
 '''
 
@@ -124,7 +120,7 @@ class RestCallManager(CSMClientBase):
             return self._get()
 
     def _build_url(self):
-        return 'https://' + self.params['hostname'] + ':/CSM/web/' + self.params['path_resource']
+        return 'https://' + self.params['hostname'] + ':' + str(self.params['port']) + '/CSM/web/' + self.params['path_resource']
 
 def main():
     argument_spec = csm_argument_spec()
