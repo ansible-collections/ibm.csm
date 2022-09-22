@@ -1,1 +1,8 @@
-releases: {}
+ancestor: null
+releases:
+  0.1.0:
+    changes:
+      release_summary: This is the pre-release of the ``ibm.csm`` collection.
+    fragments:
+    - 0.1.0.yml
+    release_date: '2022-09-22'
