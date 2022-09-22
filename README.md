@@ -62,7 +62,7 @@ Every voice is important. If you have something on your mind, create an issue or
 ## Tested with Ansible
 
 <!-- List the versions of Ansible the collection has been tested with. Must match what is in galaxy.yml. -->
-Tested with the current Ansible 2.9, 2.10, 2.11, 2.12 releases and the current development version of Ansible. Ansible versions before 2.9.10 are not supported.
+Tested with the current Ansible 2.10, 2.11, 2.12 releases and the current development version of Ansible. Ansible versions before 2.9.10 are not supported.
 
 ## External requirements
 
