@@ -1,0 +1,60 @@
+# Copyright (C) 2022 IBM CORPORATION
+# Apache License, Version 2.0 (see https://opensource.org/licenses/Apache-2.0)
+
+####################################################################
+# WARNING: These are designed specifically for Ansible tests       #
+# and should not be used as examples of how to write Ansible roles #
+####################################################################
+---
+- name: "ibm_csm_scheduled_task_action integration tests"
+  module_defaults:
+    group/ibm.csm.ibm_csm_client:
+      hostname: "{{ csm_host }}"
+      username: "{{ csm_username }}"
+      password: "{{ csm_password }}"
+
+  block:
+    - name: Run the task immediately
+      ibm.csm.ibm_csm_scheduled_task_action:
+        id: "{{ id }}"
+        action: 'run'
+      register: result
+    - name: Run the task immediately and do not return until complete
+      ibm.csm.ibm_csm_scheduled_task_action:
+        id: "{{ id }}"
+        action: 'run'
+        synchronous: True
+      register: result
+    - name: Run the task at the specified time
+      ibm.csm.ibm_csm_scheduled_task_action:
+        id: "{{ id }}"
+        action: 'run'
+        at_time: '2022-08-09T17-15'
+      register: result
+    - name: Enable the task now
+      ibm.csm.ibm_csm_scheduled_task_action:
+        id: "{{ id }}"
+        action: 'enable'
+      register: result
+    - name: Enable the task at the specified time
+      ibm.csm.ibm_csm_scheduled_task_action:
+        id: "{{ id }}"
+        action: 'enable'
+        at_time: '2022-08-09T17-30'
+      register: result
+    - name: Disable the task
+      ibm.csm.ibm_csm_scheduled_task_action:
+        id: "{{ id }}"
+        action: 'disable'
+      register: result
+    - name: Enable the task at an invalid time
+      ibm.csm.ibm_csm_scheduled_task_action:
+        id: "{{ id }}"
+        action: 'enable'
+        at_time: '2018-08-09T17-30'
+      register: result
+      ignore_errors: yes
+    - name: Verify the enable task failed
+      ansible.builtin.assert:
+        that:
+          - result is failure
