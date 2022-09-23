@@ -105,7 +105,7 @@ EXAMPLES = r'''
     username: "{{ csm_username }}"
     password: "{{ csm_password }}"
     state: 'present'
-    volume_group: 'rgroup1'
+    volume_group: 'SPECTRUM-VIRTUALIZE:VOLGROUP:FAB3-DEV13:rgroup_01'
     type: 'SnapshotSVC'
 
 - name: Update the description for a session
