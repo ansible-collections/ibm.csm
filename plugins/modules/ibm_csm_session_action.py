@@ -38,7 +38,7 @@ extends_documentation_fragment: ibm.csm.csm_client_fragment.documentation
 
 EXAMPLES = r'''
 - name: Issue a start command to a session
-  ibm.csm.ibm_csm_active_standby_action:
+  ibm.csm.ibm_csm_session_action:
     hostname: "{{ csm_host }}"
     username: "{{ csm_username }}"
     password: "{{ csm_password }}"
@@ -46,7 +46,7 @@ EXAMPLES = r'''
     command: 'Start H1->H2'
 
 - name: Recover a Safeguarded Copy session to a given backup
-  ibm.csm.ibm_csm_active_standby_action:
+  ibm.csm.ibm_csm_session_action:
     hostname: "{{ csm_host }}"
     username: "{{ csm_username }}"
     password: "{{ csm_password }}"

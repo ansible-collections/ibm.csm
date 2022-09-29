@@ -6,3 +6,37 @@ releases:
     fragments:
     - 0.1.0.yml
     release_date: '2022-09-22'
+  1.0.0:
+    changes:
+      release_summary: 'This is the first official release of the ``ibm.csm`` collection.
+
+        This changelog contains all changes to the modules and plugins in this collection
+
+        that have been made since the pre-release.'
+    fragments:
+    - 1.0.0.yml
+    modules:
+    - description: Allows customers to set the server as a standby, issue a takeover,
+        or remove the associated server
+      name: ibm_csm_active_standby_action
+      namespace: ''
+    - description: Allows customers to create or delete copy sets on CSM sessions
+      name: ibm_csm_copyset_manage
+      namespace: ''
+    - description: Retrieves current environment information from CSM server
+      name: ibm_csm_info
+      namespace: ''
+    - description: Allows customers to run, CSM REST call that may not be supported
+        by other modules.
+      name: ibm_csm_run_any_rest_call
+      namespace: ''
+    - description: Allows customers to run, enable or disable a CSM scheduled task
+      name: ibm_csm_scheduled_task_action
+      namespace: ''
+    - description: Allows customers to issue commands to sessions on the CSM server
+      name: ibm_csm_session_action
+      namespace: ''
+    - description: Allows customers to create, delete or modify CSM sessions
+      name: ibm_csm_session_manage
+      namespace: ''
+    release_date: '2022-09-29'
