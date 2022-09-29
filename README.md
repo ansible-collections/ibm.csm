@@ -53,8 +53,6 @@ To learn how to maintain / become a maintainer of this collection, refer to the 
 
 ## Governance
 
-<!--Describe how the collection is governed. Here can be the following text:-->
-
 The process of decision making in this collection is based on discussing and finding consensus among participants.
 
 Every voice is important. If you have something on your mind, create an issue or dedicated discussion and let's discuss it!
@@ -71,15 +69,22 @@ Tested with the current Ansible 2.10, 2.11, 2.12 releases and the current develo
 | ------------------ |-----------------|
 | pycsm              | v1.0.1          |
 
-### Supported connections
-<!-- Optional. If your collection supports only specific connection types (such as HTTPAPI, netconf, or others), list them here. -->
 
 ## Included content
 
 <!-- Galaxy will eventually list the module docs within the UI, but until that is ready, you may need to either describe your plugins etc here, or point to an external docsite to cover that information. -->
 
 ### Modules
-<!-- List the included modules here. -->
+
+| Name                          | Description                                                                      |
+|-------------------------------|----------------------------------------------------------------------------------|
+| ibm_csm_active_standby_action | Manage the active / standby server connection for a CSM server                   |
+| ibm_csm_copyset_manage        | Add or remove copy sets for a CSM session                                        |
+| ibm_csm_info                  | Query all aspects of sessions and the server                                     |
+| ibm_csm_run_any_rest_call     | Use this module to call anything supported in REST but not yet in the collection |
+| ibm_csm_scheduled_task_action | Run, enable or disable scheduled tasks                                           |
+| ibm_session_action            | Issue commands against a CSM session                                             |
+| ibm_csm_session_manage        | Create or delete CSM sessions                                                    |
 
 ## Using this collection
 
