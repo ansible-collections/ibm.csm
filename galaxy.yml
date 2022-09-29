@@ -2,10 +2,12 @@
 
 namespace: ibm
 name: csm
-version: 0.1.0
+version: 1.0.0
 readme: README.md
 authors:
   - blearandy (github.com/blearandy)
+  - dblea0 (github.com/dblea0)
+  - twzito (github.com/twzito)
 description: Ansible Collection for IBM Copy Services Manager
 license_file: LICENSE
 tags:
