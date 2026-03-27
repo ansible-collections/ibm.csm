@@ -136,18 +136,35 @@ class ScheduledTaskManager(CSMClientBase):
         return json.dumps(create_result, indent=4)
 
     def perform_task_action(self):
+        # Skip execution in check mode when action is 'run'
+        if self.module.check_mode and self.params['action'] == 'run':
+            return {
+                'msg': 'Would run scheduled task (skipped in check mode)',
+                'msgTranslated': 'Check mode - no changes made'
+            }
+        
+        # Handle check mode for enable/disable actions
+        if self.module.check_mode and self.params['action'] in ['enable', 'disable']:
+            return {
+                'msg': 'Would {action} scheduled task (skipped in check mode)'.format(action=self.params['action']),
+                'msgTranslated': 'Check mode - no changes made'
+            }
+        
         if self.params['action'] == 'run':
             if self.params['at_time'] is None:
                 task_result = self._run_task_now()
             else:
                 task_result = self._run_task_at_time()
-        if self.params['action'] == 'enable':
+        elif self.params['action'] == 'enable':
             if self.params['at_time'] is None:
                 task_result = self._enable_task()
             else:
                 task_result = self._enable_task_at_time()
-        if self.params['action'] == 'disable':
+        elif self.params['action'] == 'disable':
             task_result = self._disable_task()
+        else:
+            # This should never happen due to choices validation, but satisfies type checker
+            raise ValueError("Invalid action: {0}".format(self.params['action']))
 
         json_result = task_result.json()
         if json_result['msg'].endswith('E'):
@@ -175,7 +192,7 @@ def main():
     try:
         result = scheduled_task_manager.perform_task_action()
         if scheduled_task_manager.failed:
-            module.fail_json(changed=scheduled_task_manager.changed, result=result)
+            module.fail_json(msg="Task action failed", changed=scheduled_task_manager.changed, result=result)
         else:
             module.exit_json(changed=scheduled_task_manager.changed, result=result)
     except Exception as e:
