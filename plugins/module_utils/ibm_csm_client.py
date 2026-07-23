@@ -10,7 +10,6 @@ __metaclass__ = type
 import abc
 import traceback
 
-from ansible.module_utils import six
 from ansible.module_utils.basic import missing_required_lib
 
 PYCSM_IMP_ERR = None
@@ -34,8 +33,7 @@ properties = {
 }
 
 
-@six.add_metaclass(abc.ABCMeta)
-class CSMClientBase(object):
+class CSMClientBase(object, metaclass=abc.ABCMeta):
     def __init__(self, module):
 
         if not HAS_PYCSM:
