@@ -45,7 +45,9 @@ class CSMClientBase(object):
         self.params = module.params
         self.hostname = module.params['hostname']
         self.username = module.params['username']
-        self.password = module.params['password']
+#        self.password = module.params['password']    #JJW
+        self.password = module.params.get('password') #JJW
+        self.token = module.params.get('token')       #JJW
         self.port = module.params['port']
         self.call_properties = module.params['call_properties']
 
@@ -57,24 +59,34 @@ class CSMClientBase(object):
 
     def connect_to_session_api(self):
 
-        session_client = sessionClient(server_address=self.hostname, server_port=self.port, username=self.username,
-                                       password=self.password)
+        if self.token: #JJW
+            session_client = sessionClient(server_address=self.hostname, server_port=self.port, username=self.username, tk=self.token)
+
+        else:  #JJW
+            session_client = sessionClient(server_address=self.hostname, server_port=self.port, username=self.username, password=self.password)
+
         session_client.change_properties(self.call_properties)
 
         return session_client
 
     def connect_to_hw_api(self):
+        if self.token: #JJW
+            hw_client = hardwareClient(server_address=self.hostname, server_port=self.port, username=self.username, tk=self.token)
 
-        hw_client = hardwareClient(server_address=self.hostname, server_port=self.port, username=self.username,
-                                   password=self.password)
+        else:   #JJW
+            hw_client = hardwareClient(server_address=self.hostname, server_port=self.port, username=self.username, password=self.password)
         hw_client.change_properties(self.call_properties)
 
         return hw_client
 
     def connect_to_system_api(self):
 
-        system_client = systemClient(server_address=self.hostname, server_port=self.port, username=self.username,
-                                     password=self.password)
+        if self.token: #JJW
+            system_client = systemClient(server_address=self.hostname, server_port=self.port, username=self.username, tk=self.token)
+
+        else:  #JJW
+            system_client = systemClient(server_address=self.hostname, server_port=self.port, username=self.username, password=self.password)
+
         system_client.change_properties(self.call_properties)
 
         return system_client
@@ -84,7 +96,8 @@ def csm_argument_spec():
     return dict(
         hostname=dict(type='str', required=True),
         username=dict(type='str', required=True),
-        password=dict(type='str', no_log=True, required=True),
+        password=dict(type='str', no_log=True, required=False),  #JJW
+        token=dict(type='str', no_log=True, required=False),     #JJW
         port=dict(type='int', required=False, default=9559),
         call_properties=dict(type='dict', required=False, default=properties)
     )
