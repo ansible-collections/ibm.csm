@@ -1,1 +1,4 @@
+---
 host: ansible
+name: ansible_test_session
+session_non_existent: ansible_test_nonexistent_xyz
