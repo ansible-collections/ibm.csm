@@ -134,3 +134,6 @@ dmypy.json
 
 # IDE files
 *.idea
+/tests/integration/integration_config.yml
+*.tar.gz
+ibm.csm/

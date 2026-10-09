@@ -42,9 +42,8 @@
         name: "{{ session_non_existent }}"
         state: 'absent'
       register: result
-      ignore_errors: yes
-    - name: Verify the non existent name failed
+    - name: Verify the non existent delete was idempotent
       ansible.builtin.assert:
         that:
-          - result is failure
+          - result is success
           - result is not changed
