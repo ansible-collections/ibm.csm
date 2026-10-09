@@ -24,13 +24,15 @@ options:
     type: str
   action:
     description:
-      - The action to run against the scheduled task  ('run', 'enable', 'disable')
+      - The action to run against the scheduled task.
     required: true
     type: str
     choices:
       - run
       - enable
       - disable
+      - cancel
+      - delete
   synchronous:
     description:
       - Valid when action is 'run'.  If True, won't return from call until task has completed the run.
@@ -95,6 +97,22 @@ EXAMPLES = r'''
     password: "{{ csm_password }}"
     id: 2
     action: 'disable'
+
+- name: Cancel a currently running task
+  ibm.csm.ibm_csm_scheduled_task_action:
+    hostname: "{{ csm_host }}"
+    username: "{{ csm_username }}"
+    password: "{{ csm_password }}"
+    id: scheduled_task_id
+    action: 'cancel'
+
+- name: Delete a scheduled task
+  ibm.csm.ibm_csm_scheduled_task_action:
+    hostname: "{{ csm_host }}"
+    username: "{{ csm_username }}"
+    password: "{{ csm_password }}"
+    id: 2
+    action: 'delete'
 '''
 
 RETURN = r''' # '''
@@ -124,6 +142,12 @@ class ScheduledTaskManager(CSMClientBase):
     def _disable_task(self):
         return self.session_client.disable_scheduled_task(self.params['id'])
 
+    def _cancel_task(self):
+        return self.session_client.cancel_task(self.params['id'])
+
+    def _delete_task(self):
+        return self.session_client.delete_task(self.params['id'])
+
     def _handle_error(self, msg, server_result=None):
         create_result = {'msg': msg}
         self.failed = True
@@ -142,14 +166,14 @@ class ScheduledTaskManager(CSMClientBase):
                 'msg': 'Would run scheduled task (skipped in check mode)',
                 'msgTranslated': 'Check mode - no changes made'
             }
-        
+
         # Handle check mode for enable/disable actions
-        if self.module.check_mode and self.params['action'] in ['enable', 'disable']:
+        if self.module.check_mode and self.params['action'] in ['enable', 'disable', 'cancel', 'delete']:
             return {
                 'msg': 'Would {action} scheduled task (skipped in check mode)'.format(action=self.params['action']),
                 'msgTranslated': 'Check mode - no changes made'
             }
-        
+
         if self.params['action'] == 'run':
             if self.params['at_time'] is None:
                 task_result = self._run_task_now()
@@ -162,6 +186,10 @@ class ScheduledTaskManager(CSMClientBase):
                 task_result = self._enable_task_at_time()
         elif self.params['action'] == 'disable':
             task_result = self._disable_task()
+        elif self.params['action'] == 'cancel':
+            task_result = self._cancel_task()
+        elif self.params['action'] == 'delete':
+            task_result = self._delete_task()
         else:
             # This should never happen due to choices validation, but satisfies type checker
             raise ValueError("Invalid action: {0}".format(self.params['action']))
@@ -178,7 +206,7 @@ class ScheduledTaskManager(CSMClientBase):
 def main():
     argument_spec = csm_argument_spec()
     argument_spec.update(id=dict(type='str', required=True),
-                         action=dict(type='str', required=True, choices=['run', 'enable', 'disable']),
+                         action=dict(type='str', required=True, choices=['run', 'enable', 'disable', 'cancel', 'delete']),
                          synchronous=dict(type='bool'),
                          at_time=dict(type='str'))
 
