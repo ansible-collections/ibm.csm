@@ -22,7 +22,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install pyCSM
+        run: pip install pyCSM pyyaml
 
       - name: Verify collection version matches release tag
         run: |
