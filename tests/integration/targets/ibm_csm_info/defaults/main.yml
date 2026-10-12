@@ -1,1 +1,14 @@
+---
 host: ansible
+subset: all
+session:
+role:
+rolepair:
+devtype:
+devid:
+sysid:
+sysname:
+snapshot:
+wwn:
+backupid:
+msgcount: 10

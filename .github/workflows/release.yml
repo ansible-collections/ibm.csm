@@ -1,0 +1,43 @@
+name: Release to Ansible Galaxy
+
+on:
+  release:
+    types: [published]
+
+env:
+  NAMESPACE: ibm
+  COLLECTION_NAME: csm
+
+jobs:
+  release:
+    name: Publish to Ansible Galaxy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pyCSM
+
+      - name: Verify collection version matches release tag
+        run: |
+          COLLECTION_VERSION=$(python3 -c "import yaml; d=yaml.safe_load(open('galaxy.yml')); print(d['version'])")
+          RELEASE_TAG="${{ github.event.release.tag_name }}"
+          # Strip leading 'v' from tag if present (e.g. v1.1.0 -> 1.1.0)
+          RELEASE_VERSION="${RELEASE_TAG#v}"
+          if [ "$COLLECTION_VERSION" != "$RELEASE_VERSION" ]; then
+            echo "ERROR: galaxy.yml version ($COLLECTION_VERSION) does not match release tag ($RELEASE_VERSION)"
+            exit 1
+          fi
+          echo "Version check passed: $COLLECTION_VERSION"
+
+      - name: Build collection
+        run: ansible-galaxy collection build --output-path ./dist/
+
+      - name: Publish to Ansible Galaxy
+        run: ansible-galaxy collection publish ./dist/${{ env.NAMESPACE }}-${{ env.COLLECTION_NAME }}-*.tar.gz --token ${{ secrets.GALAXY_API_TOKEN }}

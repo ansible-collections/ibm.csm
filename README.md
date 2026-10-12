@@ -19,7 +19,7 @@ If you encounter abusive behavior, please refer to the [policy violations](https
 
 We announce releases and important changes through Ansible's [The Bullhorn newsletter](https://github.com/ansible/community/wiki/News#the-bullhorn). Be sure you are [subscribed](https://eepurl.com/gZmiEP).
 
-Join us in the `#ansible` (general use questions and support), `#ansible-community` (community and collection development questions), and other [IRC channels](https://docs.ansible.com/ansible/devel/community/communication.html#irc-channels).
+Join us in the [Ansible Community on Matrix](https://docs.ansible.com/ansible/devel/community/communication.html#ansible-community-on-matrix) — `#users:ansible.im` for general use questions and `#community:ansible.im` for collection development questions.
 
 We take part in the global quarterly [Ansible Contributor Summit](https://github.com/ansible/community/wiki/Contributor-Summit) virtually or in-person. Track [The Bullhorn newsletter](https://eepurl.com/gZmiEP) and join us.
 
@@ -60,14 +60,14 @@ Every voice is important. If you have something on your mind, create an issue or
 ## Tested with Ansible
 
 <!-- List the versions of Ansible the collection has been tested with. Must match what is in galaxy.yml. -->
-Tested with the current Ansible 2.17 releases and the current development version of Ansible. Ansible versions before 2.9.10 are not supported.
+Tested with ansible-core 2.15, 2.16, and 2.17, as well as the current development version. Ansible versions before 2.15.0 are not supported.
 
 ## External requirements
 
 <!-- List any external resources the collection depends on, for example minimum versions of an OS, libraries, or utilities. Do not list other Ansible collections here. -->
 | Name               | Minimum Version |
 | ------------------ |-----------------|
-| pycsm              | v1.0.1          |
+| pycsm              | v1.0.11         |
 
 
 ## Included content
@@ -82,8 +82,8 @@ Tested with the current Ansible 2.17 releases and the current development versio
 | ibm_csm_copyset_manage        | Add or remove copy sets for a CSM session                                        |
 | ibm_csm_info                  | Query all aspects of sessions and the server                                     |
 | ibm_csm_run_any_rest_call     | Use this module to call anything supported in REST but not yet in the collection |
-| ibm_csm_scheduled_task_action | Run, enable or disable scheduled tasks                                           |
-| ibm_session_action            | Issue commands against a CSM session                                             |
+| ibm_csm_scheduled_task_action | Run, enable, disable, cancel, or delete scheduled tasks                          |
+| ibm_csm_session_action        | Issue commands against a CSM session                                             |
 | ibm_csm_session_manage        | Create or delete CSM sessions                                                    |
 
 ## Using this collection
