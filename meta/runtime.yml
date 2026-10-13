@@ -1,2 +1,12 @@
 ---
-requires_ansible: '>=2.9.10'
+requires_ansible: '>=2.15.0'
+
+action_groups:
+  ibm_csm_client:
+    - ibm_csm_active_standby_action
+    - ibm_csm_copyset_manage
+    - ibm_csm_info
+    - ibm_csm_run_any_rest_call
+    - ibm_csm_scheduled_task_action
+    - ibm_csm_session_action
+    - ibm_csm_session_manage

@@ -31,6 +31,20 @@ options:
     description:
       - The backup ID or snapshot ID required for some commands to Safeguarded Copy or Snapshot sessions
     type: str
+  wait_for_state:
+    description:
+      - When specified, the module will block after issuing the command until the session reaches
+        this state or until I(wait_minutes) is exceeded.
+      - The value must be a valid CSM session state string (example - C(IdleInSync), C(ResyncInProg)).
+    type: str
+    version_added: "1.1.0"
+  wait_minutes:
+    description:
+      - The number of minutes to wait for the session to reach I(wait_for_state) before timing out.
+      - Only used when I(wait_for_state) is specified.
+    type: float
+    default: 10
+    version_added: "1.1.0"
 notes:
   - Supports C(check_mode).
 extends_documentation_fragment: ibm.csm.csm_client_fragment.documentation
@@ -44,6 +58,16 @@ EXAMPLES = r'''
     password: "{{ csm_password }}"
     name: 'sessionA'
     command: 'Start H1->H2'
+
+- name: Start a session and wait up to 15 minutes for it to reach IdleInSync
+  ibm.csm.ibm_csm_session_action:
+    hostname: "{{ csm_host }}"
+    username: "{{ csm_username }}"
+    password: "{{ csm_password }}"
+    name: 'sessionA'
+    command: 'Start H1->H2'
+    wait_for_state: 'IdleInSync'
+    wait_minutes: 15
 
 - name: Recover a Safeguarded Copy session to a given backup
   ibm.csm.ibm_csm_session_action:
@@ -83,6 +107,24 @@ class SessionCommandManager(CSMClientBase):
         )
         return json.dumps(result, indent=4)
 
+    def _wait_for_state(self):
+        result = self.session_client.wait_for_state(
+            self.params['name'],
+            self.params['wait_for_state'],
+            self.params['wait_minutes']
+        )
+        if not result.get('state_reached'):
+            self._handle_error(
+                "Timed out waiting for session '{name}' to reach state '{state}' "
+                "after {minutes} minute(s).".format(
+                    name=self.params['name'],
+                    state=self.params['wait_for_state'],
+                    minutes=self.params['wait_minutes']
+                ),
+                result
+            )
+        return result
+
     def perform_session_command_action(self):
         if self.params['backup_id'] is None:
             result = self._run_session_command()
@@ -95,6 +137,10 @@ class SessionCommandManager(CSMClientBase):
             self._handle_error("Failed the task command. ERR: {error}".format(
                 error=to_native(json_result['msgTranslated'])), json_result)
 
+        if self.params['wait_for_state'] is not None and not self.module.check_mode:
+            wait_result = self._wait_for_state()
+            return {'command_result': json_result, 'wait_result': wait_result}
+
         return json_result
 
 
@@ -102,7 +148,9 @@ def main():
     argument_spec = csm_argument_spec()
     argument_spec.update(name=dict(type='str', required=True),
                          command=dict(type='str', required=True),
-                         backup_id=dict(type='str'))
+                         backup_id=dict(type='str'),
+                         wait_for_state=dict(type='str'),
+                         wait_minutes=dict(type='float', default=10))
 
     module = AnsibleModule(
         argument_spec=argument_spec,

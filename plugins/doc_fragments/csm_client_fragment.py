@@ -25,7 +25,14 @@ class ModuleDocFragment(object):
       password:
         description:
           - The password for the username on the CSM server.
-        required: true
+          - Required when I(token) is not provided.
+        required: false
+        type: str
+      token:
+        description:
+          - An existing authentication token for the CSM server.
+          - When provided, I(password) is not required.
+        required: false
         type: str
       port:
         description:
@@ -39,7 +46,8 @@ class ModuleDocFragment(object):
         default: {'language': 'en-US', 'verify': False}
     notes:
       - For a secure connection add value 'cert' to the call_properties with the certificate.
+      - Either I(password) or I(token) must be provided.
     requirements:
-      - pyCSM >= 1.0.1
+      - pyCSM >= 1.0.11
       - python >= 3.6
     '''
