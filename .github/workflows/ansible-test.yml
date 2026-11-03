@@ -45,7 +45,10 @@ jobs:
           - stable-2.17
           - devel
         # - milestone
-    runs-on: ubuntu-latest
+    # Pinned to a fixed runner image: the devel job has been failing since
+    # 2026-10-29 while starting the test container (cgroup remount), before
+    # any sanity test runs.
+    runs-on: ubuntu-24.04
     steps:
       # Run sanity tests inside a Docker container.
       # The docker container has all the pinned dependencies that are
