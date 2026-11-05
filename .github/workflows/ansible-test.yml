@@ -49,6 +49,9 @@ jobs:
     # 2026-10-29 while starting the test container (cgroup remount), before
     # any sanity test runs.
     runs-on: ubuntu-24.04
+    # devel is a moving target (new ansible-test/container versions); don't let
+    # its infrastructure failures block the stable-2.x results.
+    continue-on-error: ${{ matrix.ansible == 'devel' }}
     steps:
       # Run sanity tests inside a Docker container.
       # The docker container has all the pinned dependencies that are
